@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --color-natural-bg: #F9FAF7;
+  --color-natural-aside: #F1F4ED;
+  --color-natural-border: #E2E8DE;
+  --color-natural-text-main: #2D3A2A;
+  --color-natural-header: #31572C;
+  --color-natural-secondary: #6A7B62;
+  --color-natural-accent: #4F772D;
+  --color-natural-dark: #132A13;
+  --color-natural-footer: #90A955;
+  --color-natural-dashed: #BCC4B5;
+  --color-natural-light-accent: #E7EBE1;
+  --color-natural-tip-bg: #E7F0E0;
+
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+}
+
+@layer base {
+  body {
+    @apply bg-natural-bg text-natural-text-main antialiased h-screen overflow-hidden;
+  }
+  html {
+    @apply h-full;
+  }
+}

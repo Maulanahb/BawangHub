@@ -1,0 +1,11 @@
+{
+  "name": "BawangHub",
+  "description": "Klinik analisis penyakit & prediksi panen bawang merah menggunakan AI.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "Image Analysis",
+    "Predictions"
+  ]
+}
