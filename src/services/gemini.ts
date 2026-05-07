@@ -166,6 +166,7 @@ export async function analyzeBukuTani(text: string): Promise<BukuTaniRecord[]> {
 }
 
 export interface WeatherAdvice {
+  title: string;
   advice: string;
   icon: string;
 }
@@ -175,11 +176,12 @@ export async function getWeatherAdvice(weatherInfo: string): Promise<WeatherAdvi
 
   const prompt = `
     Cuaca di lahan pertanian saat ini: ${weatherInfo}
-    Berikan 1-2 kalimat saran tindakan/mitigasi agrikultur spesifik yang sangat berkaitan dengan tanaman bawang merah (misal: jika hujan awas jamur moler, jika panas terik perhatikan kadar air, dsb).
+    Anda sedang menasihati petani bawang merah. Evaluasi kondisi cuaca ini dan berikan insight atau peringatan ringkas.
     
-    Kembalikan dalam format JSON murni TANPA markdown block.
+    Format output ke dalam JSON MURNI TANPA markdown block.
     {
-      "advice": "1-2 kalimat saran...",
+      "title": "Judul singkat (max 4 kata) dengan emoji (contoh: '⚠️ Waspada Jamur Moler' atau '💧 Kelembapan Tinggi')",
+      "advice": "1-2 kalimat singkat (max 15 kata) menjelaskan rekomendasi teknis yang jelas",
       "icon": "Sun" | "Cloud" | "CloudRain" | "CloudLightning" | "ThermometerSun"
     }
   `;
@@ -197,6 +199,36 @@ export async function getWeatherAdvice(weatherInfo: string): Promise<WeatherAdvi
     return JSON.parse(resultText);
   } catch (error) {
     console.error("Gemini Weather Advice Error:", error);
+    throw error;
+  }
+}
+
+export async function getDetailedWeatherAdvice(weatherInfo: string): Promise<string> {
+  const model = "gemini-3-flash-preview";
+
+  const prompt = `
+    Cuaca di lahan pertanian bawang merah saat ini: ${weatherInfo}
+    Berikan analisis cuaca dan rekomendasi agrikultur terperinci untuk tanaman bawang merah berdasarkan kondisi ini.
+    
+    Balas dalam format laporan observasi dan instruksi aksi, seperti:
+    - Analisis kondisi cuaca saat ini dampaknya terhadap kelembapan tanah, jamur, atau hama (misal: embun upas, moler, ulat bawang).
+    - Tindakan preventif atau kuratif yang harus dilakukan hari ini (penyiraman pembilasan embun, dosis pestisida, dsb).
+    
+    Format dalam Markdown biasa (boleh pakai list, bold), tanpa blok markdown JSON.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: [{ parts: [{ text: prompt }] }],
+    });
+
+    const resultText = response.text;
+    if (!resultText) throw new Error("No response from AI");
+    
+    return resultText;
+  } catch (error) {
+    console.error("Gemini Detailed Weather Advice Error:", error);
     throw error;
   }
 }

@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['userId', 'createdAt', 'updatedAt']) &&
+             data.userId == request.auth.uid &&
+             (data.get('name', '') is string) &&
+             (data.get('email', '') is string) &&
+             (data.get('landArea', 0) is number) &&
+             (data.get('landLocation', '') is string) &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && userId == request.auth.uid;
+      allow list: if false; // No blanket reads
+
+      allow create: if isSignedIn() && isValidId(userId) &&
+        userId == request.auth.uid &&
+        isValidUser(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isSignedIn() && isValidId(userId) &&
+        userId == request.auth.uid &&
+        isValidUser(incoming()) &&
+        incoming().userId == existing().userId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'email', 'landArea', 'landLocation', 'updatedAt']);
+    }
+
+    function isValidHistory(data) {
+      return data.keys().hasAll(['userId', 'type', 'title', 'data', 'createdAt']) &&
+             data.userId == request.auth.uid &&
+             (data.type == 'kalkulator' || data.type == 'klinik') &&
+             data.title is string && data.title.size() <= 200 &&
+             data.data is map &&
+             data.createdAt is timestamp;
+    }
+
+    match /users/{userId}/history/{historyId} {
+      allow get: if isSignedIn() && isValidId(userId) && isValidId(historyId) && userId == request.auth.uid;
+      allow list: if isSignedIn() && isValidId(userId) && userId == request.auth.uid;
+
+      allow create: if isSignedIn() && isValidId(userId) && isValidId(historyId) &&
+        userId == request.auth.uid &&
+        isValidHistory(incoming()) &&
+        incoming().createdAt == request.time;
+      
+      allow update, delete: if false; // history is immutable
+    }
+  }
+}

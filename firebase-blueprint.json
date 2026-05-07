@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile with land info",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "landArea": { "type": "number", "description": "Luas lahan" },
+        "landLocation": { "type": "string", "description": "Lokasi lahan" },
+        "updatedAt": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "createdAt", "updatedAt"]
+    },
+    "History": {
+      "title": "User History",
+      "description": "History of Kalkulator and Klinik interactions",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["kalkulator", "klinik"] },
+        "title": { "type": "string" },
+        "data": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "type", "title", "data", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "User" },
+      "description": "Store user profiles"
+    },
+    "/users/{userId}/history/{historyId}": {
+      "schema": { "$ref": "History" },
+      "description": "Store history specific to the user"
+    }
+  }
+}

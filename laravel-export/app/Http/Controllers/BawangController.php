@@ -347,11 +347,12 @@ EOT;
 
             $prompt = <<<EOT
 Cuaca di lahan pertanian saat ini: {$weatherInfo}
-Berikan 1-2 kalimat saran tindakan/mitigasi agrikultur spesifik yang sangat berkaitan dengan tanaman bawang merah (misal: jika hujan awas jamur moler, jika panas terik perhatikan kadar air, dsb).
+Anda sedang menasihati petani bawang merah. Evaluasi kondisi cuaca ini dan berikan insight atau peringatan ringkas.
 
 Kembalikan DENGAN FORMAT JSON MURNI TANPA markdown block (tanpa ```json ... ```):
 {
-  "advice": "1-2 kalimat saran...",
+  "title": "Judul singkat (max 4 kata) dengan emoji (contoh: '⚠️ Waspada Jamur Moler')",
+  "advice": "1-2 kalimat singkat (max 15 kata) menjelaskan rekomendasi teknis yang jelas",
   "icon": "Sun" atau "Cloud" atau "CloudRain" atau "CloudLightning" atau "ThermometerSun",
   "weather": "{$weatherInfo}"
 }

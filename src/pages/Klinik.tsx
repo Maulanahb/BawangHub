@@ -3,6 +3,9 @@ import { UploadCloud, Loader2, AlertCircle } from "lucide-react";
 import { analyzeShallotHealth, type AnalysisResult } from "../services/gemini";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../components/AuthProvider";
+import { db, handleFirestoreError, OperationType } from "../lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Klinik() {
   const [file, setFile] = useState<File | null>(null);
@@ -10,6 +13,7 @@ export default function Klinik() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -30,6 +34,26 @@ export default function Klinik() {
       const base64Data = await getBase64(file);
       const res = await analyzeShallotHealth(base64Data, file.type);
       setResult(res);
+      
+      if (user) {
+        try {
+          const historyRef = collection(db, "users", user.uid, "history");
+          await addDoc(historyRef, {
+            userId: user.uid,
+            type: "klinik",
+            title: `Diagnosis: ${res.diseaseName}`,
+            data: {
+              ...res,
+              solusi: res.recommendations?.[0] || res.details
+            },
+            createdAt: serverTimestamp()
+          });
+        } catch (fbError) {
+          try {
+             handleFirestoreError(fbError, OperationType.CREATE, `users/${user.uid}/history/{historyId}`);
+          } catch(e) {}
+        }
+      }
     } catch (err: any) {
       setError(err.message || "Gagal menganalisis gambar.");
     } finally {

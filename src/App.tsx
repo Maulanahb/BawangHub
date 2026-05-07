@@ -10,20 +10,32 @@ import Klinik from "./pages/Klinik";
 import Kalkulator from "./pages/Kalkulator";
 import JadwalTanam from "./pages/JadwalTanam";
 import BukuTani from "./pages/BukuTani";
+import CuacaDetail from "./pages/CuacaDetail";
+import Login from "./pages/Login";
+import Profil from "./pages/Profil";
+import { AuthProvider } from "./components/AuthProvider";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="klinik" element={<Klinik />} />
-          <Route path="kalkulator" element={<Kalkulator />} />
-          <Route path="jadwal" element={<JadwalTanam />} />
-          <Route path="bukutani" element={<BukuTani />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="klinik" element={<Klinik />} />
+              <Route path="kalkulator" element={<Kalkulator />} />
+              <Route path="jadwal" element={<JadwalTanam />} />
+              <Route path="bukutani" element={<BukuTani />} />
+              <Route path="cuaca" element={<CuacaDetail />} />
+              <Route path="profil" element={<Profil />} />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

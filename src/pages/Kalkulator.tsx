@@ -3,12 +3,16 @@ import { Loader2, TrendingUp, AlertCircle, Calculator } from "lucide-react";
 import { predictHarvest, type PredictionResult } from "../services/gemini";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../components/AuthProvider";
+import { db, handleFirestoreError, OperationType } from "../lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Kalkulator() {
   const [form, setForm] = useState({ area: "", weather: "", capital: "" });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,6 +21,28 @@ export default function Kalkulator() {
     try {
       const res = await predictHarvest(form.area, form.weather, form.capital);
       setResult(res);
+      
+      if (user) {
+        try {
+          const historyRef = collection(db, "users", user.uid, "history");
+          await addDoc(historyRef, {
+            userId: user.uid,
+            type: "kalkulator",
+            title: `Estimasi Panen Lahan ${form.area}`,
+            data: {
+              ...res,
+              inputArea: form.area,
+              inputWeather: form.weather,
+              inputCapital: form.capital,
+            },
+            createdAt: serverTimestamp()
+          });
+        } catch (fbError) {
+          try {
+             handleFirestoreError(fbError, OperationType.CREATE, `users/${user.uid}/history/{historyId}`);
+          } catch(e) {}
+        }
+      }
     } catch (err: any) {
       setError(err.message || "Gagal memproses prediksi.");
     } finally {
