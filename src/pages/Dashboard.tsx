@@ -104,80 +104,80 @@ export default function Dashboard() {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
-        <Card className="hover:border-green-500/50 transition-colors group flex flex-col bg-white shadow-sm h-full">
+        <Card className="group flex flex-col bg-white border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 h-full hover:-translate-y-1">
           <CardHeader>
-            <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4">
-              <LeafyGreen className="text-green-600 w-6 h-6" />
+            <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4 text-green-600 transition-transform duration-300 group-hover:scale-110">
+              <LeafyGreen className="w-6 h-6" />
             </div>
-            <CardTitle className="text-gray-900">Klinik Bawang</CardTitle>
-            <CardDescription className="line-clamp-3 text-gray-600">
+            <CardTitle className="text-gray-900 transition-colors duration-300 group-hover:text-green-700">Klinik Bawang</CardTitle>
+            <CardDescription className="line-clamp-3 text-gray-600 mt-1">
               Analisis penyakit daun bawang merah Anda lewat foto. Cukup upload foto, biarkan AI yang mendiagnosis penyakitnya.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/klinik"
-              className="inline-flex items-center text-sm font-semibold text-green-600 hover:text-green-700"
+              className="inline-flex items-center text-sm font-medium text-gray-400 group-hover:text-green-600 transition-colors duration-300"
             >
               Coba Sekarang <ArrowRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="hover:border-blue-500/50 transition-colors group flex flex-col bg-white shadow-sm h-full">
+        <Card className="group flex flex-col bg-white border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 h-full hover:-translate-y-1">
           <CardHeader>
-            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-              <Calculator className="text-blue-600 w-6 h-6" />
+            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-blue-600 transition-transform duration-300 group-hover:scale-110">
+              <Calculator className="w-6 h-6" />
             </div>
-            <CardTitle className="text-gray-900">Kalkulator Panen</CardTitle>
-            <CardDescription className="line-clamp-3 text-gray-600">
+            <CardTitle className="text-gray-900 transition-colors duration-300 group-hover:text-blue-700">Kalkulator Panen</CardTitle>
+            <CardDescription className="line-clamp-3 text-gray-600 mt-1">
               Hitung estimasi panen, prediksi harga jual, dan terima panduan strategi pasar cerdas berdasarkan luas lahan dan cuaca.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/kalkulator"
-              className="inline-flex items-center text-sm font-semibold text-green-600 hover:text-green-700"
+              className="inline-flex items-center text-sm font-medium text-gray-400 group-hover:text-blue-600 transition-colors duration-300"
             >
               Mulai Hitung <ArrowRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="hover:border-amber-500/50 transition-colors group flex flex-col bg-white shadow-sm h-full">
+        <Card className="group flex flex-col bg-white border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 h-full hover:-translate-y-1">
           <CardHeader>
-            <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4">
-              <CalendarDays className="text-amber-600 w-6 h-6" />
+            <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4 text-amber-600 transition-transform duration-300 group-hover:scale-110">
+              <CalendarDays className="w-6 h-6" />
             </div>
-            <CardTitle className="text-gray-900">Jadwal Tanam</CardTitle>
-            <CardDescription className="line-clamp-3 text-gray-600">
+            <CardTitle className="text-gray-900 transition-colors duration-300 group-hover:text-amber-700">Jadwal Tanam</CardTitle>
+            <CardDescription className="line-clamp-3 text-gray-600 mt-1">
               Masukan tanggal tanam dan AI akan merumuskan timeline harian kapan harus memupuk, menyemprot, dan panen.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/jadwal"
-              className="inline-flex items-center text-sm font-semibold text-green-600 hover:text-green-700"
+              className="inline-flex items-center text-sm font-medium text-gray-400 group-hover:text-amber-600 transition-colors duration-300"
             >
               Buat Jadwal <ArrowRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="hover:border-indigo-500/50 transition-colors group flex flex-col bg-white shadow-sm h-full">
+        <Card className="group flex flex-col bg-white border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-lg transition-all duration-300 h-full hover:-translate-y-1">
           <CardHeader>
-            <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-4">
-              <BookOpen className="text-indigo-600 w-6 h-6" />
+            <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-4 text-indigo-600 transition-transform duration-300 group-hover:scale-110">
+              <BookOpen className="w-6 h-6" />
             </div>
-            <CardTitle className="text-gray-900">Buku Tani Cerdas</CardTitle>
-            <CardDescription className="line-clamp-3 text-gray-600">
+            <CardTitle className="text-gray-900 transition-colors duration-300 group-hover:text-indigo-700">Buku Tani Cerdas</CardTitle>
+            <CardDescription className="line-clamp-3 text-gray-600 mt-1">
               Catat pengeluaran dan pemasukan dengan bahasa layaknya SMS, biarkan AI mengekstrak nilainya ke tabel database.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/bukutani"
-              className="inline-flex items-center text-sm font-semibold text-green-600 hover:text-green-700"
+              className="inline-flex items-center text-sm font-medium text-gray-400 group-hover:text-indigo-600 transition-colors duration-300"
             >
               Buka Buku <ArrowRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>

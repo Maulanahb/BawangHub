@@ -110,6 +110,12 @@ export default function Kalkulator() {
                   ) : "Hitung Estimasi"}
                 </Button>
 
+                {!user && (
+                  <p className="text-xs text-center text-neutral-500 mt-3 mt-4 flex items-center justify-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5" /> Data bisa tersimpan otomatis jika Anda <a href="/login" className="text-blue-600 hover:underline font-medium">Masuk</a>.
+                  </p>
+                )}
+
                  {error && (
                   <div className="p-3 bg-red-50 text-red-700 rounded-xl text-sm flex items-start gap-2 mt-4">
                     <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />

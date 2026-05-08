@@ -71,5 +71,48 @@ service cloud.firestore {
       
       allow update, delete: if false; // history is immutable
     }
+
+    function isValidThread(data) {
+      return data.keys().hasAll(['userId', 'userName', 'judul', 'isi_pesan', 'createdAt']) &&
+             data.userId == request.auth.uid &&
+             data.userName is string && data.userName.size() <= 100 &&
+             data.judul is string && data.judul.size() <= 200 &&
+             data.isi_pesan is string && data.isi_pesan.size() <= 5000 &&
+             data.createdAt is timestamp;
+    }
+
+    match /threads/{threadId} {
+      allow get: if isSignedIn() && isValidId(threadId);
+      allow list: if isSignedIn();
+
+      allow create: if isSignedIn() && isValidId(threadId) &&
+        isValidThread(incoming()) &&
+        incoming().createdAt == request.time;
+
+      allow update, delete: if false; 
+    }
+
+    function isValidReply(data) {
+      return data.keys().hasAll(['threadId', 'userId', 'userName', 'isi_balasan', 'is_ai_generated', 'createdAt']) &&
+             (data.userId == request.auth.uid || data.userId == 'bawang-bot') &&
+             data.threadId is string && data.threadId.size() <= 128 &&
+             data.userName is string && data.userName.size() <= 100 &&
+             data.isi_balasan is string && data.isi_balasan.size() <= 10000 &&
+             data.is_ai_generated is bool &&
+             data.createdAt is timestamp;
+    }
+
+    match /threads/{threadId}/replies/{replyId} {
+      allow get: if isSignedIn() && isValidId(threadId) && isValidId(replyId);
+      allow list: if isSignedIn() && isValidId(threadId);
+
+      allow create: if isSignedIn() && isValidId(threadId) && isValidId(replyId) &&
+        isValidReply(incoming()) &&
+        incoming().threadId == threadId &&
+        exists(/databases/$(database)/documents/threads/$(threadId)) &&
+        incoming().createdAt == request.time;
+
+      allow update, delete: if false;
+    }
   }
 }

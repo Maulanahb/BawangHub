@@ -233,6 +233,71 @@ export async function getDetailedWeatherAdvice(weatherInfo: string): Promise<str
   }
 }
 
+export async function getStatistikInsight(expensesData: string, trenHarga: string): Promise<string> {
+  const model = "gemini-3-flash-preview";
+
+  const prompt = `
+    Kamu adalah analis pertanian. Baca data pengeluaran dan tren harga bawang merah berikut. 
+    Berikan maksimal 3 kalimat kesimpulan analitik dan saran finansial yang sangat mudah dipahami oleh petani lokal.
+    
+    Data Pengeluaran:
+    ${expensesData}
+    
+    Tren Harga Bawang Merah:
+    ${trenHarga}
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: [{ parts: [{ text: prompt }] }],
+    });
+
+    const resultText = response.text;
+    if (!resultText) throw new Error("No response from AI");
+    
+    return resultText;
+  } catch (error) {
+    console.error("Gemini Statistik Insight Error:", error);
+    throw error;
+  }
+}
+
+export async function getBawangBotReply(threadDetails: string, previousReplies: string, newMessage: string): Promise<string> {
+  const model = "gemini-3-flash-preview";
+  
+  const prompt = `
+    Kamu adalah pakar pertanian bernama BawangBot. Pengguna memanggilmu di Forum Tani.
+    Bacalah diskusi berikut ini dan berikan saran / solusi yang sangat membantu, solutif,
+    dan berdasarkan praktik pertanian yang baik.
+    Gunakan bahasa yang bersahabat, profesional, dan mudah dipahami oleh petani lokal.
+    
+    === DETAIL DISKUSI ===
+    ${threadDetails}
+    
+    === BALASAN SEBELUMNYA ===
+    ${previousReplies}
+    
+    === PESAN TERBARU YANG MEMANGGIL @BawangBot ===
+    ${newMessage}
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: [{ parts: [{ text: prompt }] }],
+    });
+
+    const resultText = response.text;
+    if (!resultText) throw new Error("No response from AI");
+    
+    return resultText;
+  } catch (error) {
+    console.error("Gemini Forum Bot Error:", error);
+    throw error;
+  }
+}
+
 export async function generateTimeline(startDate: string): Promise<TimelineResult> {
   const model = "gemini-3-flash-preview";
 

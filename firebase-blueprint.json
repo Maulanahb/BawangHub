@@ -27,6 +27,34 @@
         "createdAt": { "type": "string" }
       },
       "required": ["userId", "type", "title", "data", "createdAt"]
+    },
+    "Thread": {
+      "title": "Forum Thread",
+      "description": "A discussion thread in the forum",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "judul": { "type": "string", "description": "Title of the thread" },
+        "isi_pesan": { "type": "string", "description": "Content of the thread" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "userName", "judul", "isi_pesan", "createdAt"]
+    },
+    "Reply": {
+      "title": "Thread Reply",
+      "description": "A reply to a forum thread",
+      "type": "object",
+      "properties": {
+        "threadId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "isi_balasan": { "type": "string", "description": "Content of the reply" },
+        "is_ai_generated": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["threadId", "userId", "userName", "isi_balasan", "is_ai_generated", "createdAt"]
     }
   },
   "firestore": {
@@ -37,6 +65,14 @@
     "/users/{userId}/history/{historyId}": {
       "schema": { "$ref": "History" },
       "description": "Store history specific to the user"
+    },
+    "/threads/{threadId}": {
+      "schema": { "$ref": "Thread" },
+      "description": "Store forum discussion threads"
+    },
+    "/threads/{threadId}/replies/{replyId}": {
+      "schema": { "$ref": "Reply" },
+      "description": "Store replies for each forum discussion thread"
     }
   }
 }

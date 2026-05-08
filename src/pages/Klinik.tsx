@@ -120,6 +120,12 @@ export default function Klinik() {
             )}
           </Button>
 
+          {!user && (
+            <p className="text-xs text-center text-neutral-500 mt-4 flex items-center justify-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5" /> Riwayat diagnosis bisa tersimpan jika Anda <a href="/login" className="text-green-600 hover:underline font-medium">Masuk</a>.
+            </p>
+          )}
+
           {error && (
             <div className="p-4 bg-red-50 text-red-700 rounded-xl text-sm flex items-start gap-3">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
