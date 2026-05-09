@@ -4,20 +4,20 @@
  */
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Dashboard from "./pages/Dashboard";
-import Klinik from "./pages/Klinik";
-import Kalkulator from "./pages/Kalkulator";
-import JadwalTanam from "./pages/JadwalTanam";
-import BukuTani from "./pages/BukuTani";
-import Statistik from "./pages/Statistik";
-import Forum from "./pages/Forum";
-import ForumDetail from "./pages/ForumDetail";
-import CuacaDetail from "./pages/CuacaDetail";
-import Login from "./pages/Login";
-import Profil from "./pages/Profil";
-import { AuthProvider } from "./components/AuthProvider";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import Layout from "./views/components/Layout";
+import Dashboard from "./views/pages/Dashboard";
+import Klinik from "./views/pages/Klinik";
+import Kalkulator from "./views/pages/Kalkulator";
+import JadwalTanam from "./views/pages/JadwalTanam";
+import BukuTani from "./views/pages/BukuTani";
+import Statistik from "./views/pages/Statistik";
+import Forum from "./views/pages/Forum";
+import ForumDetail from "./views/pages/ForumDetail";
+import CuacaDetail from "./views/pages/CuacaDetail";
+import Login from "./views/pages/Login";
+import Profil from "./views/pages/Profil";
+import { AuthProvider } from "./views/components/AuthProvider";
+import { ProtectedRoute } from "./views/components/ProtectedRoute";
 
 export default function App() {
   return (

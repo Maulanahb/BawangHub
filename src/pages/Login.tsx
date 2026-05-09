@@ -9,20 +9,20 @@ export default function Login() {
   if (user) return <Navigate to="/" replace />;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <BawangLogo className="w-8 h-8 text-rose-600" />
+    <div className="min-h-screen flex items-center justify-center bg-neo-primary px-4 border-[12px] border-black">
+      <div className="max-w-md w-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 text-center animate-in fade-in zoom-in-95 duration-500">
+        <div className="w-20 h-20 bg-neo-pink border-4 border-black flex items-center justify-center mx-auto mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -rotate-3 hover:rotate-0 transition-transform">
+          <BawangLogo className="w-10 h-10 text-black" />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Masuk ke BawangHub</h1>
-        <p className="text-gray-600 mb-8">
+        <h1 className="text-3xl lg:text-4xl font-black text-black mb-2 tracking-tight uppercase" style={{ letterSpacing: "-0.05em" }}>Masuk ke BawangHub</h1>
+        <p className="text-black font-medium mb-8 border-b-4 border-black pb-6">
           Masuk untuk menyimpan riwayat panen dan analisis klinik bawang Anda.
         </p>
         <button
           onClick={signIn}
-          className="w-full bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 font-medium py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors mb-4"
+          className="w-full bg-white border-4 border-black text-black font-black py-4 px-4 flex items-center justify-center gap-3 transition-all mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-neo-yellow hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none uppercase tracking-wide text-lg"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] p-1 bg-white" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"
@@ -40,9 +40,9 @@ export default function Login() {
               fill="#EA4335"
             />
           </svg>
-          Lanjutkan dengan Google
+          Gunakan Google
         </button>
-        <a href="/" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+        <a href="/" className="inline-block text-sm font-black text-black uppercase bg-neo-green border-2 border-black px-4 py-2 hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all active:translate-y-[2px] active:shadow-none">
           Lanjutkan tanpa masuk &rarr;
         </a>
       </div>

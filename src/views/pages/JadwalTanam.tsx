@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Loader2, Calendar, Droplet, Bug, Scissors, Leaf, CheckCircle2, AlertCircle } from "lucide-react";
-import { generateTimeline, type TimelineResult } from "../services/gemini";
+import { generateTimeline, type TimelineResult } from "../../models/services/gemini";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { clsx, type ClassValue } from "clsx";

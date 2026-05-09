@@ -5,8 +5,8 @@ import {
 } from "recharts";
 import { Sparkles, TrendingUp, AlertCircle, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getStatistikInsight } from "../services/gemini";
-import type { BukuTaniRecord } from "../services/gemini";
+import { getStatistikInsight } from "../../models/services/gemini";
+import type { BukuTaniRecord } from "../../models/services/gemini";
 
 // Mock data: Tren Harga Bawang Merah 6 Bulan Terakhir & Prediksi (Bulan ke-7)
 const trenHargaData = [

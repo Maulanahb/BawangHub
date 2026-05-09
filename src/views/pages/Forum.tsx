@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
-import { db, handleFirestoreError, OperationType } from "../lib/firebase";
+import { db, handleFirestoreError, OperationType } from "../../models/lib/firebase";
 import { useAuth } from "../components/AuthProvider";
-import { Thread } from "../types/forum";
+import { Thread } from "../../models/types/forum";
 import { MessageSquare, Plus, Loader2 } from "lucide-react";
 
 export default function Forum() {

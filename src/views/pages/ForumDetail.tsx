@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { collection, query, orderBy, onSnapshot, addDoc, doc, getDoc, serverTimestamp } from "firebase/firestore";
-import { db, handleFirestoreError, OperationType } from "../lib/firebase";
+import { db, handleFirestoreError, OperationType } from "../../models/lib/firebase";
 import { useAuth } from "../components/AuthProvider";
-import { Thread, Reply } from "../types/forum";
-import { getBawangBotReply } from "../services/gemini";
+import { Thread, Reply } from "../../models/types/forum";
+import { getBawangBotReply } from "../../models/services/gemini";
 import { ArrowLeft, Send, Loader2, Bot, User as UserIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 

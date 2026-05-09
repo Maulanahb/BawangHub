@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Cloud, Sun, CloudRain, CloudLightning, ThermometerSun, Loader2, ArrowLeft, Droplets, Wind, Eye, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getDetailedWeatherAdvice } from "../services/gemini";
+import { getDetailedWeatherAdvice } from "../../models/services/gemini";
 import Markdown from "react-markdown";
 
 export default function CuacaDetail() {

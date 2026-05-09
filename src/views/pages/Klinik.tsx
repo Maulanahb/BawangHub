@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { UploadCloud, Loader2, AlertCircle } from "lucide-react";
-import { analyzeShallotHealth, type AnalysisResult } from "../services/gemini";
+import { analyzeShallotHealth, type AnalysisResult } from "../../models/services/gemini";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../components/AuthProvider";
-import { db, handleFirestoreError, OperationType } from "../lib/firebase";
+import { db, handleFirestoreError, OperationType } from "../../models/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Klinik() {

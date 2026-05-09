@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Loader2, TrendingUp, AlertCircle, Calculator } from "lucide-react";
-import { predictHarvest, type PredictionResult } from "../services/gemini";
+import { predictHarvest, type PredictionResult } from "../../models/services/gemini";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../components/AuthProvider";
-import { db, handleFirestoreError, OperationType } from "../lib/firebase";
+import { db, handleFirestoreError, OperationType } from "../../models/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Kalkulator() {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../components/AuthProvider";
-import { db, handleFirestoreError, OperationType } from "../lib/firebase";
+import { db, handleFirestoreError, OperationType } from "../../models/lib/firebase";
 import { doc, getDocFromServer, updateDoc, collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { UserCircle, MapPin, Ruler, Loader2, Save, FileText, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";

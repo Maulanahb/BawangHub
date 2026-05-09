@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, LeafyGreen, Calculator, CalendarDays, BookOpen, Sun, Cloud, CloudRain, CloudLightning, ThermometerSun, Loader2, MapPin } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { getWeatherAdvice, type WeatherAdvice } from "../services/gemini";
+import { getWeatherAdvice, type WeatherAdvice } from "../../models/services/gemini";
 import { motion } from "motion/react";
 
 const WeatherIcon = ({ iconName, className }: { iconName: string, className?: string }) => {

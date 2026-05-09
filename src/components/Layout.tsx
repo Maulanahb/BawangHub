@@ -24,14 +24,14 @@ export default function Layout() {
   ];
 
   return (
-    <div className="h-screen w-full bg-gray-50 flex overflow-hidden">
+    <div className="h-screen w-full bg-neo-bg flex overflow-hidden">
       {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col h-full">
-        <div className="h-16 flex items-center px-6 border-b border-gray-200">
-          <BawangLogo className="w-6 h-6 text-rose-600 mr-2" />
-          <span className="text-xl font-bold text-gray-900 tracking-tight">BawangHub</span>
+      <div className="w-64 bg-white border-r-4 border-black hidden md:flex flex-col h-full z-10">
+        <div className="h-16 flex items-center px-6 border-b-4 border-black bg-neo-accent">
+          <BawangLogo className="w-6 h-6 text-black mr-2" />
+          <span className="text-2xl font-bold text-black tracking-tight" style={{ letterSpacing: "-0.05em" }}>BawangHub</span>
         </div>
-        <nav className="flex-1 py-6 px-3 space-y-1">
+        <nav className="flex-1 py-6 px-4 space-y-2">
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;
             return (
@@ -39,17 +39,18 @@ export default function Layout() {
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  "flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
+                  "flex items-center px-3 py-3 text-sm font-bold border-2 border-transparent transition-all",
                   isActive
-                    ? "bg-green-50 text-green-700"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    ? "bg-neo-yellow border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-x-[-2px] translate-y-[-2px]"
+                    : "text-black hover:bg-neo-primary hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px]"
                 )}
               >
                 <item.icon
                   className={cn(
                     "mr-3 flex-shrink-0 h-5 w-5",
-                    isActive ? "text-green-600" : "text-gray-400 group-hover:text-gray-500"
+                    isActive ? "text-black" : "text-black"
                   )}
+                  strokeWidth={isActive ? 2.5 : 2}
                 />
                 {item.name}
               </Link>
@@ -58,25 +59,25 @@ export default function Layout() {
         </nav>
         
         {user ? (
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t-4 border-black bg-white">
             <Link 
               to="/profil" 
-              className={cn("flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors mb-1", location.pathname === '/profil' ? "bg-green-50 text-green-700" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900")}
+              className={cn("flex items-center px-3 py-3 text-sm font-bold border-2 border-transparent mb-2 transition-all", location.pathname === '/profil' ? "bg-neo-yellow border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] translate-x-[-2px] translate-y-[-2px]" : "text-black hover:bg-neo-primary hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px]")}
             >
-              <UserCircle className={cn("mr-3 flex-shrink-0 h-5 w-5", location.pathname === '/profil' ? "text-green-600" : "text-gray-400")} /> Profil Saya
+              <UserCircle className={cn("mr-3 flex-shrink-0 h-5 w-5 text-black")} /> Profil Saya
             </Link>
             <button 
               onClick={logOut}
-              className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="flex items-center w-full px-3 py-3 text-sm font-bold border-2 border-transparent text-black hover:bg-red-400 hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
             >
-              <LogOut className="mr-3 flex-shrink-0 h-5 w-5 text-red-500" /> Keluar
+              <LogOut className="mr-3 flex-shrink-0 h-5 w-5 text-black" strokeWidth={2.5}/> Keluar
             </button>
           </div>
         ) : (
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t-4 border-black bg-neo-primary">
             <Link 
               to="/login" 
-              className="flex items-center justify-center w-full px-3 py-3 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-xl transition-colors"
+              className="flex items-center justify-center w-full px-3 py-3 text-sm font-bold text-black border-2 border-black bg-neo-accent shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
             >
                Masuk / Daftar
             </Link>
@@ -86,11 +87,11 @@ export default function Layout() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-full">
-        <div className="md:hidden h-16 border-b border-gray-200 bg-white flex items-center px-4 shrink-0">
-          <BawangLogo className="w-6 h-6 text-rose-600 mr-2" />
-          <span className="text-xl font-bold text-gray-900 tracking-tight">BawangHub</span>
+        <div className="md:hidden h-16 border-b-4 border-black bg-neo-accent flex items-center px-4 shrink-0 shadow-sm relative z-10 w-full">
+          <BawangLogo className="w-6 h-6 text-black mr-2" />
+          <span className="text-2xl font-bold text-black tracking-tight">BawangHub</span>
         </div>
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+        <main className="flex-1 p-6 md:p-8 overflow-y-auto w-full">
           <div className="max-w-4xl mx-auto">
             <Outlet />
           </div>
