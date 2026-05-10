@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { collection, query, orderBy, onSnapshot, addDoc, doc, getDoc, serverTimestamp } from "firebase/firestore";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { collection, query, orderBy, onSnapshot, addDoc, doc, getDoc, serverTimestamp, writeBatch, getDocs } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "../../models/lib/firebase";
 import { useAuth } from "../components/AuthProvider";
-import { Thread, Reply } from "../../models/types/forum";
-import { getBawangBotReply } from "../../models/services/gemini";
-import { ArrowLeft, Send, Loader2, Bot, User as UserIcon } from "lucide-react";
+import { Thread, Reply } from "../../types/forum";
+import { getAgriAIReply } from "../../models/services/gemini";
+import { ArrowLeft, Send, Loader2, Bot, User as UserIcon, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 export default function ForumDetail() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, isAdmin } = useAuth();
   
   const [thread, setThread] = useState<Thread | null>(null);
   const [replies, setReplies] = useState<Reply[]>([]);
@@ -79,18 +80,18 @@ export default function ForumDetail() {
         createdAt: serverTimestamp(),
       });
 
-      // 2. Check for @BawangBot
-      if (messageToPost.includes("@BawangBot")) {
+      // 2. Check for @AgriAI
+      if (messageToPost.includes("@AgriAI")) {
         const previousRepliesStr = replies.map(r => `[${r.userName}]: ${r.isi_balasan}`).join("\n");
         const threadDetailsStr = `Judul: ${thread.judul}\nIsi: ${thread.isi_pesan}`;
         
         try {
-          const aiResponseText = await getBawangBotReply(threadDetailsStr, previousRepliesStr, messageToPost);
+          const aiResponseText = await getAgriAIReply(threadDetailsStr, previousRepliesStr, messageToPost);
           
           await addDoc(collection(db, "threads", id, "replies"), {
             threadId: id,
             userId: "bawang-bot",
-            userName: "BawangBot",
+            userName: "Agri AI",
             isi_balasan: aiResponseText,
             is_ai_generated: true,
             createdAt: serverTimestamp(),
@@ -104,6 +105,33 @@ export default function ForumDetail() {
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, `threads/${id}/replies`);
     } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteThread = async () => {
+    if (!id || !window.confirm("Apakah Anda yakin ingin menghapus diskusi ini? Semua balasan juga akan ikut terhapus.")) return;
+    
+    setIsSubmitting(true);
+    try {
+      const batch = writeBatch(db);
+      
+      // Get all replies and add them to batch delete
+      const repliesRef = collection(db, "threads", id, "replies");
+      const repliesSnap = await getDocs(repliesRef);
+      repliesSnap.forEach((docSnap) => {
+        batch.delete(docSnap.ref);
+      });
+      
+      // Delete the main thread doc
+      batch.delete(doc(db, "threads", id));
+      
+      // Commit the batch
+      await batch.commit();
+      
+      navigate("/forum");
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `threads/${id}`);
       setIsSubmitting(false);
     }
   };
@@ -129,9 +157,22 @@ export default function ForumDetail() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <Link to="/forum" className="inline-flex items-center text-sm font-bold text-black border-b-2 border-transparent hover:border-black transition-colors w-max">
-        <ArrowLeft className="w-4 h-4 mr-1" strokeWidth={2.5} /> Kembali ke Daftar Diskusi
-      </Link>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <Link to="/forum" className="inline-flex items-center text-sm font-bold text-black border-b-2 border-transparent hover:border-black transition-colors w-max">
+          <ArrowLeft className="w-4 h-4 mr-1" strokeWidth={2.5} /> Kembali ke Daftar Diskusi
+        </Link>
+        
+        {isAdmin && (
+          <button 
+            onClick={handleDeleteThread}
+            disabled={isSubmitting}
+            className="flex items-center gap-1 font-bold text-white bg-red-600 border-2 border-black px-4 py-2 hover:bg-red-700 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 text-sm"
+          >
+            <Trash2 className="w-4 h-4" />
+            Hapus Diskusi
+          </button>
+        )}
+      </div>
 
       {/* Main Thread Post */}
       <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -201,14 +242,14 @@ export default function ForumDetail() {
           <textarea
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
-            placeholder="Tulis balasan... (Ketik @BawangBot untuk bertanya pada AI)"
+            placeholder="Tulis balasan... (Ketik @AgriAI untuk bertanya pada AI)"
             className="w-full h-32 px-4 py-3 border-2 border-black focus:outline-none focus:ring-0 focus:border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white resize-none text-black font-medium transition-all placeholder:text-gray-500"
             required
             disabled={isSubmitting}
           />
           <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <p className="text-sm font-bold text-black border-l-4 border-black pl-3 hidden sm:block">
-              Tip: Panggil <span className="font-black text-black bg-neo-yellow border-2 border-black px-1.5 py-0.5 ml-1">@BawangBot</span> untuk pendapat AI.
+              Tip: Panggil <span className="font-black text-black bg-neo-yellow border-2 border-black px-1.5 py-0.5 ml-1">@AgriAI</span> untuk pendapat AI.
             </p>
             <button
               type="submit"

@@ -237,8 +237,8 @@ export async function getStatistikInsight(expensesData: string, trenHarga: strin
   const model = "gemini-3-flash-preview";
 
   const prompt = `
-    Kamu adalah analis pertanian. Baca data pengeluaran dan tren harga bawang merah berikut. 
-    Berikan maksimal 3 kalimat kesimpulan analitik dan saran finansial yang sangat mudah dipahami oleh petani lokal.
+    Kamu adalah analis ekonomi pertanian. Baca data pengeluaran dan tren harga bawang merah berikut. 
+    Buatkan ringkasan naratif (sekitar 2-3 paragraf) yang menganalisis korelasi antara tren harga pasar dan proporsi pengeluaran secara komprehensif. Sampaikan dengan bahasa yang mudah dipahami oleh petani lokal, suportif, serta berikan saran finansial yang praktis. Gunakan Markdown (seperti bold, list) untuk membuat narasi lebih menarik dibaca.
     
     Data Pengeluaran:
     ${expensesData}
@@ -347,3 +347,45 @@ export async function generateTimeline(startDate: string): Promise<TimelineResul
     throw error;
   }
 }
+
+export interface ChatMessage {
+  role: "user" | "model";
+  text: string;
+}
+
+export async function chatWithAgriAI(history: ChatMessage[], message: string): Promise<string> {
+  const model = "gemini-3-flash-preview";
+
+  const systemInstruction = `Kamu adalah pakar pertanian tingkat lanjut bernama Agri AI. 
+Posisikan dirimu sebagai asisten dan konsultan andalan petani bawang merah di Indonesia, khususnya di Jawa. 
+Berikan saran yang solutif, komprehensif, berdasarkan praktik pertanian yang baik. 
+Gunakan bahasa Indonesia yang jelas, profesional namun tetap santai dan mudah dimengerti (bisa menggunakan istilah-istilah di kalangan petani, misal: ngored, mbedi, dll jika relevan).`;
+
+  const formattedHistory = history.map(msg => ({
+    role: msg.role === "user" ? "user" : "model",
+    parts: [{ text: msg.text }]
+  }));
+
+  try {
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: [
+        ...formattedHistory,
+        { role: "user", parts: [{ text: message }] }
+      ],
+      config: {
+        systemInstruction: systemInstruction
+      }
+    });
+
+    const resultText = response.text;
+    if (!resultText) throw new Error("No response from AI");
+    
+    return resultText;
+  } catch (error) {
+    console.error("Gemini Chat Error:", error);
+    throw error;
+  }
+}
+
+

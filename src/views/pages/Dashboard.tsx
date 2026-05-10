@@ -4,6 +4,7 @@ import { ArrowRight, LeafyGreen, Calculator, CalendarDays, BookOpen, Sun, Cloud,
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { getWeatherAdvice, type WeatherAdvice } from "../../models/services/gemini";
 import { motion } from "motion/react";
+import { JavaneseFarmerSVG, BawangMerahSVG } from "../components/Illustrations";
 
 const WeatherIcon = ({ iconName, className }: { iconName: string, className?: string }) => {
   switch (iconName) {
@@ -24,24 +25,45 @@ export default function Dashboard() {
   useEffect(() => {
     async function loadWeather() {
       try {
-        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.8694&longitude=109.0533&current_weather=true');
-        const data = await res.json();
-        const temp = data.current_weather.temperature;
-        const code = data.current_weather.weathercode;
-        
-        let condition = "Cerah";
-        if (code > 0 && code <= 3) condition = "Berawan";
-        if (code >= 45 && code <= 48) condition = "Berkabut";
-        if (code >= 51 && code <= 67) condition = "Hujan";
-        if (code >= 95) condition = "Badai Petir";
+        let infoText = "";
+        try {
+          const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.8694&longitude=109.0533&current_weather=true');
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          const data = await res.json();
+          const temp = data.current_weather.temperature;
+          const code = data.current_weather.weathercode;
+          
+          let condition = "Cerah";
+          if (code > 0 && code <= 3) condition = "Berawan";
+          if (code >= 45 && code <= 48) condition = "Berkabut";
+          if (code >= 51 && code <= 67) condition = "Hujan";
+          if (code >= 95) condition = "Badai Petir";
 
-        const infoText = `${condition}, Suhu ${temp}°C`;
-        setWeatherInfo(infoText);
+          infoText = `${condition}, Suhu ${temp}°C`;
+          setWeatherInfo(infoText);
+        } catch (weatherErr) {
+          console.error("Gagal mendapatkan cuaca (Open-Meteo):", weatherErr);
+          infoText = "Data cuaca tidak tersedia saat ini";
+          setWeatherInfo(infoText);
+        }
 
-        const aiAdvice = await getWeatherAdvice(infoText);
-        setAdvice(aiAdvice);
+        try {
+          const aiAdvice = await getWeatherAdvice(infoText);
+          setAdvice(aiAdvice);
+        } catch (aiErr: any) {
+          console.error("Gagal mendapatkan saran AI:", aiErr);
+          const isQuotaError = aiErr?.message?.includes("429") || aiErr?.message?.includes("RESOURCE_EXHAUSTED") || aiErr?.message?.includes("quota");
+          
+          setAdvice({
+            icon: "ThermometerSun",
+            title: "Saran AI Tidak Tersedia",
+            advice: isQuotaError 
+              ? "Batas penggunaan AI (Quota) telah habis. Silakan coba lagi nanti." 
+              : "Gagal memuat saran dari Agri AI. Pastikan koneksi internet stabil."
+          });
+        }
       } catch (err) {
-        console.error("Gagal mendapatkan cuaca:", err);
+        console.error("Gagal memuat cuaca & saran:", err);
       } finally {
         setLoading(false);
       }
@@ -52,12 +74,35 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row justify-between gap-6">
-        <div className="flex-1">
+      <div className="flex flex-col md:flex-row justify-between gap-6 relative">
+        <div className="flex-1 relative z-10">
           <h1 className="text-4xl md:text-5xl font-black tracking-tight text-black uppercase" style={{ letterSpacing: "-0.05em" }}>Dashboard BawangHub</h1>
           <p className="text-black font-medium mt-2 text-lg max-w-xl border-l-4 border-black pl-4">
             Platform AI untuk mendukung petani bawang merah Indonesia.
           </p>
+          
+          {/* Dashboard Vector Illustration Placeholder */}
+          <div className="mt-8 hidden md:block">
+            <div className="inline-flex items-end gap-2 border-b-4 border-black px-4 pb-0 relative">
+               <div className="absolute w-full h-1/2 bg-neo-accent bottom-0 left-0 -z-10"></div>
+               <div className="relative transform hover:-translate-y-2 transition-transform duration-300">
+                 <div className="w-24 h-24 bg-white border-4 border-black border-b-0 rounded-t-2xl flex items-center justify-center shadow-[4px_0_0_0_rgba(0,0,0,1)] relative z-20 overflow-hidden">
+                    <JavaneseFarmerSVG className="w-20 h-20 mt-4" />
+                 </div>
+               </div>
+               <div className="relative transform hover:-translate-y-1 transition-transform duration-300 delay-75">
+                 <div className="w-16 h-20 bg-neo-yellow border-4 border-black border-b-0 rounded-t-2xl flex items-center justify-center shadow-[4px_0_0_0_rgba(0,0,0,1)] relative z-10 overflow-hidden">
+                    <BawangMerahSVG className="w-12 h-12 mt-2" />
+                 </div>
+               </div>
+               <div className="ml-4 pb-2 flex flex-col items-start gap-2">
+                 <span className="font-black text-black">Petani & Bawang Merah!</span>
+                 <Link to="/tanya-ai" className="inline-flex items-center text-xs font-bold text-white border-2 border-black bg-black px-3 py-1 hover:bg-gray-800 shadow-[2px_2px_0px_0px_rgba(255,234,167,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
+                   Tanya Agri AI <ArrowRight className="ml-1 w-3 h-3" />
+                 </Link>
+               </div>
+            </div>
+          </div>
         </div>
 
         {/* Widget Cuaca & Saran AI */}

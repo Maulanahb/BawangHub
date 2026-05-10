@@ -12,31 +12,52 @@ export default function CuacaDetail() {
   useEffect(() => {
     async function loadWeatherDetail() {
       try {
-        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.8694&longitude=109.0533&current_weather=true&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Asia%2FJakarta');
-        const data = await res.json();
-        
-        const current = data.current_weather;
-        const temp = current.temperature;
-        const code = current.weathercode;
-        const windSpeed = current.windspeed;
-        
-        // Find current humidity from hourly data
-        const currentHour = new Date().getHours();
-        const humidity = data.hourly.relative_humidity_2m[currentHour];
-        
-        let condition = "Cerah";
-        if (code > 0 && code <= 3) condition = "Berawan";
-        if (code >= 45 && code <= 48) condition = "Berkabut";
-        if (code >= 51 && code <= 67) condition = "Hujan";
-        if (code >= 95) condition = "Badai Petir";
+        let infoText = "";
+        try {
+          const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.8694&longitude=109.0533&current_weather=true&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Asia%2FJakarta');
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          const data = await res.json();
+          
+          const current = data.current_weather;
+          const temp = current.temperature;
+          const code = current.weathercode;
+          const windSpeed = current.windspeed;
+          
+          // Find current humidity from hourly data
+          const currentHour = new Date().getHours();
+          const humidity = data.hourly.relative_humidity_2m[currentHour];
+          
+          let condition = "Cerah";
+          if (code > 0 && code <= 3) condition = "Berawan";
+          if (code >= 45 && code <= 48) condition = "Berkabut";
+          if (code >= 51 && code <= 67) condition = "Hujan";
+          if (code >= 95) condition = "Badai Petir";
 
-        const infoText = `${condition}, Suhu ${temp}°C, Angin ${windSpeed} km/h, Kelembapan ${humidity}%`;
-        setWeatherInfo({
-            condition, temp, windSpeed, humidity
-        });
+          infoText = `${condition}, Suhu ${temp}°C, Angin ${windSpeed} km/h, Kelembapan ${humidity}%`;
+          setWeatherInfo({
+              condition, temp, windSpeed, humidity
+          });
+        } catch (weatherErr) {
+          console.error("Gagal mendapatkan cuaca (Open-Meteo):", weatherErr);
+          infoText = "Data cuaca tidak tersedia";
+          setWeatherInfo({
+              condition: "-", temp: 0, windSpeed: 0, humidity: 0
+          });
+        }
 
-        const aiAdvice = await getDetailedWeatherAdvice(infoText);
-        setAdvice(aiAdvice);
+        try {
+          const aiAdvice = await getDetailedWeatherAdvice(infoText);
+          setAdvice(aiAdvice);
+        } catch (aiErr: any) {
+          console.error("Gagal mendapatkan saran AI:", aiErr);
+          const isQuotaError = aiErr?.message?.includes("429") || aiErr?.message?.includes("RESOURCE_EXHAUSTED") || aiErr?.message?.includes("quota");
+          
+          if (isQuotaError) {
+            setAdvice("Batas penggunaan AI (Quota) telah habis. Analisis cuaca Agri AI tidak dapat dimuat saat ini. Silakan coba lagi nanti.");
+          } else {
+            setAdvice(`Gagal memuat analisis cuaca Agri AI: ${aiErr instanceof Error ? aiErr.message : "Error jaringan"}`);
+          }
+        }
       } catch (err) {
         console.error("Gagal mendapatkan cuaca detail:", err);
       } finally {

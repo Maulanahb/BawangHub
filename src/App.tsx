@@ -16,8 +16,11 @@ import ForumDetail from "./views/pages/ForumDetail";
 import CuacaDetail from "./views/pages/CuacaDetail";
 import Login from "./views/pages/Login";
 import Profil from "./views/pages/Profil";
+import TanyaAI from "./views/pages/TanyaAI";
+import AdminDashboard from "./views/pages/AdminDashboard";
 import { AuthProvider } from "./views/components/AuthProvider";
 import { ProtectedRoute } from "./views/components/ProtectedRoute";
+import { AdminRoute } from "./views/components/AdminRoute";
 
 export default function App() {
   return (
@@ -33,10 +36,14 @@ export default function App() {
             <Route path="bukutani" element={<BukuTani />} />
             <Route path="statistik" element={<Statistik />} />
             <Route path="cuaca" element={<CuacaDetail />} />
+            <Route path="tanya-ai" element={<TanyaAI />} />
             <Route element={<ProtectedRoute />}>
               <Route path="forum" element={<Forum />} />
               <Route path="forum/:id" element={<ForumDetail />} />
               <Route path="profil" element={<Profil />} />
+              <Route element={<AdminRoute />}>
+                <Route path="admin" element={<AdminDashboard />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

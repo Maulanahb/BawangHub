@@ -20,6 +20,9 @@ export default function Profil() {
   });
   
   const [history, setHistory] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
 
   useEffect(() => {
     async function fetchData() {
@@ -39,7 +42,7 @@ export default function Profil() {
 
         // Fetch History
         const historyRef = collection(db, "users", user.uid, "history");
-        const historyQuery = query(historyRef, orderBy("createdAt", "desc"), limit(10));
+        const historyQuery = query(historyRef, orderBy("createdAt", "desc"), limit(50));
         const historySnap = await getDocs(historyQuery);
         setHistory(historySnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         
@@ -51,6 +54,32 @@ export default function Profil() {
     }
     fetchData();
   }, [user]);
+
+  const filteredHistory = history
+    .filter((item) => {
+      // Filter by type
+      if (filterType !== "all" && item.type !== filterType) return false;
+      
+      // Filter by search
+      if (searchQuery) {
+        const queryLower = searchQuery.toLowerCase();
+        const matchesTitle = item.title?.toLowerCase().includes(queryLower);
+        const descText = item.type === 'kalkulator' 
+          ? `Est. Panen: ${item.data?.estimasiBerat_kg || 0} kg | Pendapatan: Rp ${(item.data?.estimasiPendapatan || 0).toLocaleString('id-ID')}`
+          : (item.data?.solusi || 'Analisis penyakit');
+        const matchesDesc = descText.toLowerCase().includes(queryLower);
+          
+        return matchesTitle || matchesDesc;
+      }
+      
+      return true;
+    })
+    .sort((a, b) => {
+      const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : Date.now();
+      const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : Date.now();
+      
+      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+    });
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,8 +95,9 @@ export default function Profil() {
         updatedAt: new Date()
       });
       setMessage("Profil berhasil diperbarui.");
-    } catch (error) {
-      setMessage("Gagal memperbarui profil.");
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      setMessage(error?.message ? `Gagal memperbarui profil: ${error.message}` : "Gagal memperbarui profil.");
       try {
         handleFirestoreError(error, OperationType.UPDATE, `users/${user.uid}`);
       } catch(e) {}
@@ -160,24 +190,62 @@ export default function Profil() {
             <FileText className="w-6 h-6 text-black" strokeWidth={3} /> Histori Saya
           </h3>
           
+          {history.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-3 mb-6 bg-neo-primary p-4 border-4 border-black border-dashed">
+              <input
+                type="text"
+                placeholder="Cari riwayat..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 w-full border-2 border-black px-3 py-2 text-sm font-medium focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
+              />
+              <div className="flex gap-2 w-full sm:w-auto">
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-1/2 sm:w-auto border-2 border-black px-3 py-2 text-sm font-bold bg-white focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
+                >
+                  <option value="all">Semua</option>
+                  <option value="kalkulator">Kalkulator</option>
+                  <option value="klinik">Klinik AI</option>
+                </select>
+
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value as "desc" | "asc")}
+                  className="w-1/2 sm:w-auto border-2 border-black px-3 py-2 text-sm font-bold bg-white focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
+                >
+                  <option value="desc">Terbaru</option>
+                  <option value="asc">Terlama</option>
+                </select>
+              </div>
+            </div>
+          )}
+
           {history.length > 0 ? (
             <div className="space-y-4">
-              {history.map(item => (
-                <div key={item.id} className="p-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-neo-primary hover:bg-white transition-colors">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className={`text-xs font-black uppercase border-2 border-black text-black px-2 py-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${item.type === 'kalkulator' ? 'bg-neo-blue' : 'bg-neo-green'}`}>
-                      {item.type === 'kalkulator' ? 'Kalkulator' : 'Klinik AI'}
-                    </span>
-                    <span className="text-xs text-black font-bold bg-white border border-black px-2 py-0.5">
-                      {item.createdAt?.toDate ? item.createdAt.toDate().toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric'}) : 'Baru saja'}
-                    </span>
+              {filteredHistory.length > 0 ? (
+                filteredHistory.map(item => (
+                  <div key={item.id} className="p-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-neo-primary hover:bg-white transition-colors">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className={`text-xs font-black uppercase border-2 border-black text-black px-2 py-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${item.type === 'kalkulator' ? 'bg-neo-blue' : 'bg-neo-green'}`}>
+                        {item.type === 'kalkulator' ? 'Kalkulator' : 'Klinik AI'}
+                      </span>
+                      <span className="text-xs text-black font-bold bg-white border border-black px-2 py-0.5">
+                        {item.createdAt?.toDate ? item.createdAt.toDate().toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric'}) : 'Baru saja'}
+                      </span>
+                    </div>
+                    <h4 className="font-black text-black text-lg mb-1 uppercase tracking-tight">{item.title}</h4>
+                    <p className="text-sm font-medium text-black line-clamp-2 leading-relaxed">
+                      {item.type === 'kalkulator' ? `Est. Panen: ${item.data.estimasiBerat_kg || 0} kg | Pendapatan: Rp ${(item.data.estimasiPendapatan || 0).toLocaleString('id-ID')}` : item.data.solusi || 'Analisis penyakit'}
+                    </p>
                   </div>
-                  <h4 className="font-black text-black text-lg mb-1 uppercase tracking-tight">{item.title}</h4>
-                  <p className="text-sm font-medium text-black line-clamp-2 leading-relaxed">
-                    {item.type === 'kalkulator' ? `Est. Panen: ${item.data.estimasiBerat_kg || 0} kg | Pendapatan: Rp ${(item.data.estimasiPendapatan || 0).toLocaleString('id-ID')}` : item.data.solusi || 'Analisis penyakit'}
-                  </p>
+                ))
+              ) : (
+                <div className="text-center py-6 text-black font-medium border-4 border-black border-dashed">
+                  Pencarian tidak menemukan hasil.
                 </div>
-              ))}
+              )}
             </div>
           ) : (
             <div className="text-center py-10 bg-neo-primary border-4 border-black border-dashed">

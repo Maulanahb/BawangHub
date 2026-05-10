@@ -7,9 +7,15 @@ export default function BukuTani() {
     setText,
     loading,
     records,
+    filteredAndSortedRecords,
     error,
     handleSubmit,
-    clearRecords
+    clearRecords,
+    categories,
+    categoryFilter,
+    setCategoryFilter,
+    sortOrder,
+    setSortOrder
   } = useBukuTaniController();
 
   const formatRupiah = (angka: number) => {
@@ -81,24 +87,51 @@ export default function BukuTani() {
             </div>
             <div className="p-0 overflow-y-auto flex-1 bg-white">
               {records.length > 0 ? (
-                <table className="w-full text-sm text-left border-collapse">
-                  <thead className="bg-neo-yellow text-black sticky top-0 border-b-4 border-black z-10">
-                    <tr>
-                      <th className="px-5 py-4 font-black uppercase text-xs border-r-2 border-black border-collapse">Tanggal</th>
-                      <th className="px-5 py-4 font-black uppercase text-xs border-r-2 border-black border-collapse">Kategori</th>
-                      <th className="px-5 py-4 font-black uppercase text-xs text-right border-collapse">Nominal</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y-2 divide-black">
-                    {records.map((r, i) => (
-                      <tr key={i} className="hover:bg-neo-primary transition-colors">
-                        <td className="px-5 py-4 text-black font-bold text-xs whitespace-nowrap border-r-2 border-black">{r.tanggal}</td>
-                        <td className="px-5 py-4 text-black font-black uppercase">{r.kategori}</td>
-                        <td className="px-5 py-4 text-right text-black font-black whitespace-nowrap bg-neo-accent/20">{formatRupiah(r.nominal)}</td>
+                <>
+                  <div className="flex flex-col sm:flex-row gap-4 p-4 border-b-4 border-black bg-neo-primary">
+                    <div className="flex-1">
+                      <label className="block text-xs font-black uppercase text-black mb-1">Filter Kategori</label>
+                      <select 
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        className="w-full border-2 border-black bg-white px-3 py-2 text-sm font-bold text-black focus:outline-none focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+                      >
+                        {categories.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-xs font-black uppercase text-black mb-1">Urutkan Tanggal</label>
+                      <select 
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+                        className="w-full border-2 border-black bg-white px-3 py-2 text-sm font-bold text-black focus:outline-none focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+                      >
+                        <option value="desc">Terbaru</option>
+                        <option value="asc">Terlama</option>
+                      </select>
+                    </div>
+                  </div>
+                  <table className="w-full text-sm text-left border-collapse">
+                    <thead className="bg-neo-yellow text-black sticky top-0 border-b-4 border-black z-10">
+                      <tr>
+                        <th className="px-5 py-4 font-black uppercase text-xs border-r-2 border-black border-collapse">Tanggal</th>
+                        <th className="px-5 py-4 font-black uppercase text-xs border-r-2 border-black border-collapse">Kategori</th>
+                        <th className="px-5 py-4 font-black uppercase text-xs text-right border-collapse">Nominal</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y-2 divide-black">
+                      {filteredAndSortedRecords.map((r, i) => (
+                        <tr key={i} className="hover:bg-neo-primary transition-colors">
+                          <td className="px-5 py-4 text-black font-bold text-xs whitespace-nowrap border-r-2 border-black">{r.tanggal}</td>
+                          <td className="px-5 py-4 text-black font-black uppercase">{r.kategori}</td>
+                          <td className="px-5 py-4 text-right text-black font-black whitespace-nowrap bg-neo-accent/20">{formatRupiah(r.nominal)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
               ) : (
                 <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-black p-8 text-center bg-neo-primary">
                   <div className="w-16 h-16 border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center mb-6">

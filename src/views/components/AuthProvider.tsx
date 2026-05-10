@@ -6,6 +6,7 @@ import { doc, getDocFromServer, setDoc, serverTimestamp } from 'firebase/firesto
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isAdmin: boolean;
   signIn: () => Promise<void>;
   logOut: () => Promise<void>;
 }
@@ -13,6 +14,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  isAdmin: false,
   signIn: async () => {},
   logOut: async () => {},
 });
@@ -21,6 +23,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,15 +43,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               email: currentUser.email || '',
               landArea: 0,
               landLocation: '',
+              is_admin: false,
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp()
             });
+            setIsAdmin(false);
+          } else {
+            setIsAdmin(userSnap.data().is_admin === true);
           }
         } catch (error) {
           try {
              handleFirestoreError(error, OperationType.GET, `users/${currentUser.uid}`);
           } catch(e) {}
         }
+      } else {
+        setIsAdmin(false);
       }
       
       setLoading(false);
@@ -61,8 +70,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error("Sign in error", error);
+    } catch (error: any) {
+      const errorMessage = error?.message || "";
+      const errorCode = error?.code || "";
+      if (
+        errorCode !== 'auth/cancelled-popup-request' && 
+        errorCode !== 'auth/popup-closed-by-user' &&
+        !errorMessage.includes('cancelled-popup-request') &&
+        !errorMessage.includes('popup-closed-by-user')
+      ) {
+        console.error("Sign in error", error);
+      }
+      throw error;
     }
   };
 
@@ -75,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, logOut }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, signIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );

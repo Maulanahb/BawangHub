@@ -1,19 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, writeBatch, getDocs, doc } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "../../models/lib/firebase";
 import { useAuth } from "../components/AuthProvider";
-import { Thread } from "../../models/types/forum";
-import { MessageSquare, Plus, Loader2 } from "lucide-react";
+import { Thread } from "../../types/forum";
+import { MessageSquare, Plus, Loader2, Trash2 } from "lucide-react";
 
 export default function Forum() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newMessage, setNewMessage] = useState("");
+
+  const handleDeleteThread = async (e: React.MouseEvent, id: string) => {
+    e.preventDefault(); // Prevent navigating to the detail page
+    e.stopPropagation();
+    if (!window.confirm("Apakah Anda yakin ingin menghapus diskusi ini? Semua balasan juga akan ikut terhapus.")) return;
+
+    try {
+      const batch = writeBatch(db);
+      
+      const repliesRef = collection(db, "threads", id, "replies");
+      const repliesSnap = await getDocs(repliesRef);
+      repliesSnap.forEach((docSnap) => {
+        batch.delete(docSnap.ref);
+      });
+      
+      batch.delete(doc(db, "threads", id));
+      await batch.commit();
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `threads/${id}`);
+    }
+  };
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -97,11 +118,22 @@ export default function Forum() {
             <Link
               key={thread.id}
               to={`/forum/${thread.id}`}
-              className="block bg-white p-6 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all group"
+              className="block bg-white p-6 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all group relative"
             >
-              <h2 className="text-2xl font-black text-black group-hover:underline uppercase tracking-tight">
-                {thread.judul}
-              </h2>
+              <div className="flex justify-between items-start gap-4">
+                <h2 className="text-2xl font-black text-black group-hover:underline uppercase tracking-tight">
+                  {thread.judul}
+                </h2>
+                {isAdmin && (
+                  <button
+                    onClick={(e) => handleDeleteThread(e, thread.id)}
+                    className="flex-shrink-0 text-white bg-red-600 border-2 border-black p-2 hover:bg-red-700 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+                    title="Hapus Diskusi"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
               <p className="text-black font-medium mt-2 line-clamp-2 text-sm border-l-2 border-black pl-3">
                 {thread.isi_pesan}
               </p>
