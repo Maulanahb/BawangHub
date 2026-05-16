@@ -21,6 +21,7 @@ import AdminDashboard from "./views/pages/AdminDashboard";
 import { AuthProvider } from "./views/components/AuthProvider";
 import { ProtectedRoute } from "./views/components/ProtectedRoute";
 import { AdminRoute } from "./views/components/AdminRoute";
+import Galeri from "./views/pages/Galeri";
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="statistik" element={<Statistik />} />
             <Route path="cuaca" element={<CuacaDetail />} />
             <Route path="tanya-ai" element={<TanyaAI />} />
+            <Route path="galeri" element={<Galeri />} />
             <Route element={<ProtectedRoute />}>
               <Route path="forum" element={<Forum />} />
               <Route path="forum/:id" element={<ForumDetail />} />

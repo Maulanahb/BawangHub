@@ -43,13 +43,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               email: currentUser.email || '',
               landArea: 0,
               landLocation: '',
-              is_admin: false,
+              is_admin: currentUser.email === 'maulanahmad2287@gmail.com',
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp()
             });
-            setIsAdmin(false);
+            setIsAdmin(currentUser.email === 'maulanahmad2287@gmail.com');
           } else {
-            setIsAdmin(userSnap.data().is_admin === true);
+            setIsAdmin(userSnap.data().is_admin === true || currentUser.email === 'maulanahmad2287@gmail.com');
           }
         } catch (error) {
           try {

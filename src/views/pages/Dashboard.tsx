@@ -21,13 +21,14 @@ export default function Dashboard() {
   const [weatherInfo, setWeatherInfo] = useState<string>("");
   const [advice, setAdvice] = useState<WeatherAdvice | null>(null);
   const [loading, setLoading] = useState(true);
+  const [locationName, setLocationName] = useState("Brebes");
 
   useEffect(() => {
-    async function loadWeather() {
+    async function loadWeather(lat: number, lon: number, locName: string) {
       try {
         let infoText = "";
         try {
-          const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.8694&longitude=109.0533&current_weather=true');
+          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
           if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
           const data = await res.json();
           const temp = data.current_weather.temperature;
@@ -41,6 +42,7 @@ export default function Dashboard() {
 
           infoText = `${condition}, Suhu ${temp}°C`;
           setWeatherInfo(infoText);
+          setLocationName(locName);
         } catch (weatherErr) {
           console.error("Gagal mendapatkan cuaca (Open-Meteo):", weatherErr);
           infoText = "Data cuaca tidak tersedia saat ini";
@@ -52,14 +54,11 @@ export default function Dashboard() {
           setAdvice(aiAdvice);
         } catch (aiErr: any) {
           console.error("Gagal mendapatkan saran AI:", aiErr);
-          const isQuotaError = aiErr?.message?.includes("429") || aiErr?.message?.includes("RESOURCE_EXHAUSTED") || aiErr?.message?.includes("quota");
           
           setAdvice({
             icon: "ThermometerSun",
             title: "Saran AI Tidak Tersedia",
-            advice: isQuotaError 
-              ? "Batas penggunaan AI (Quota) telah habis. Silakan coba lagi nanti." 
-              : "Gagal memuat saran dari Agri AI. Pastikan koneksi internet stabil."
+            advice: aiErr instanceof Error ? aiErr.message : "Gagal memuat saran dari Agri AI. Pastikan koneksi internet stabil."
           });
         }
       } catch (err) {
@@ -69,7 +68,29 @@ export default function Dashboard() {
       }
     }
 
-    loadWeather();
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          try {
+             const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=id`);
+             const geoData = await geoRes.json();
+             const city = geoData.city || geoData.locality || "Lokasi Anda";
+             loadWeather(lat, lon, city);
+          } catch(e) {
+             loadWeather(lat, lon, "Lokasi Anda");
+          }
+        },
+        (error) => {
+          console.warn("Geolocation denied or error, fallback to Brebes");
+          loadWeather(-6.8694, 109.0533, "Brebes");
+        },
+        { timeout: 10000 }
+      );
+    } else {
+      loadWeather(-6.8694, 109.0533, "Brebes");
+    }
   }, []);
 
   return (
@@ -121,7 +142,7 @@ export default function Dashboard() {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className="font-bold text-black flex items-center gap-1 text-xs border-2 border-black bg-white px-2 py-0.5">
-                      <MapPin className="w-3.5 h-3.5" /> Brebes
+                      <MapPin className="w-3.5 h-3.5" /> {locationName}
                     </span>
                     <span className="font-bold text-black text-xs border-2 border-black bg-neo-accent px-2 py-0.5">
                       {weatherInfo}
@@ -148,80 +169,80 @@ export default function Dashboard() {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
-        <Card className="group flex flex-col bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 h-full">
+        <Card className="group flex flex-col bg-neo-green border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
           <CardHeader>
-            <div className="w-12 h-12 bg-neo-accent border-2 border-black rounded-xl flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110">
-              <LeafyGreen className="w-6 h-6" />
+            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <LeafyGreen className="w-8 h-8" />
             </div>
-            <CardTitle className="text-black font-bold">Klinik Bawang</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-1">
+            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Klinik Bawang</CardTitle>
+            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
               Analisis penyakit daun bawang merah Anda lewat foto. Cukup upload foto, biarkan AI yang mendiagnosis penyakitnya.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/klinik"
-              className="inline-flex items-center text-sm font-bold text-black border-2 border-black bg-neo-yellow px-4 py-2 hover:bg-neo-blue shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
             >
               Coba Sekarang <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="group flex flex-col bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 h-full">
+        <Card className="group flex flex-col bg-neo-blue border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
           <CardHeader>
-            <div className="w-12 h-12 bg-neo-blue border-2 border-black rounded-xl flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110">
-              <Calculator className="w-6 h-6" />
+            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Calculator className="w-8 h-8" />
             </div>
-            <CardTitle className="text-black font-bold">Kalkulator Panen</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-1">
+            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Kalkulator Panen</CardTitle>
+            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
               Hitung estimasi panen, prediksi harga jual, dan terima panduan strategi pasar cerdas berdasarkan luas lahan dan cuaca.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/kalkulator"
-              className="inline-flex items-center text-sm font-bold text-black border-2 border-black bg-neo-yellow px-4 py-2 hover:bg-neo-blue shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
             >
               Mulai Hitung <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="group flex flex-col bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 h-full">
+        <Card className="group flex flex-col bg-neo-yellow border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
           <CardHeader>
-            <div className="w-12 h-12 bg-neo-yellow border-2 border-black rounded-xl flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110">
-              <CalendarDays className="w-6 h-6" />
+            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <CalendarDays className="w-8 h-8" />
             </div>
-            <CardTitle className="text-black font-bold">Jadwal Tanam</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-1">
+            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Jadwal Tanam</CardTitle>
+            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
               Masukan tanggal tanam dan AI akan merumuskan timeline harian kapan harus memupuk, menyemprot, dan panen.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/jadwal"
-              className="inline-flex items-center text-sm font-bold text-black border-2 border-black bg-neo-yellow px-4 py-2 hover:bg-neo-blue shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
             >
               Buat Jadwal <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="group flex flex-col bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 h-full">
+        <Card className="group flex flex-col bg-neo-pink border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
           <CardHeader>
-            <div className="w-12 h-12 bg-neo-pink border-2 border-black rounded-xl flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110">
-              <BookOpen className="w-6 h-6" />
+            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <BookOpen className="w-8 h-8" />
             </div>
-            <CardTitle className="text-black font-bold">Buku Tani Cerdas</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-1">
+            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Buku Tani Cerdas</CardTitle>
+            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
               Catat pengeluaran dan pemasukan dengan bahasa layaknya SMS, biarkan AI mengekstrak nilainya ke tabel database.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/bukutani"
-              className="inline-flex items-center text-sm font-bold text-black border-2 border-black bg-neo-yellow px-4 py-2 hover:bg-neo-blue shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
             >
               Buka Buku <ArrowRight className="ml-2 w-4 h-4" />
             </Link>

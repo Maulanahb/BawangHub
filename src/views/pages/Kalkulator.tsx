@@ -16,6 +16,13 @@ export default function Kalkulator() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validasi input angka
+    if (isNaN(Number(form.area)) || isNaN(Number(form.capital))) {
+      setError("Luas lahan dan modal tanam harus berupa angka.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -64,11 +71,12 @@ export default function Kalkulator() {
           <div className="border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-black text-black uppercase">Luas Lahan (m² / Hektar)</label>
+                  <label className="text-sm font-black text-black uppercase">Luas Lahan (m² / Hektar) - Angka Saja</label>
                   <input
-                    type="text"
+                    type="number"
+                    step="any"
                     required
-                    placeholder="Contoh: 1.5 Hektar"
+                    placeholder="Contoh: 1.5"
                     className="w-full px-4 py-3 border-2 border-black focus:outline-none focus:ring-0 focus:border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-medium text-black placeholder:text-gray-500 bg-white"
                     value={form.area}
                     onChange={(e) => setForm({ ...form, area: e.target.value })}
@@ -88,11 +96,11 @@ export default function Kalkulator() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-black text-black uppercase">Modal Tanam (Rp)</label>
+                  <label className="text-sm font-black text-black uppercase">Modal Tanam (Rp) - Angka Saja</label>
                   <input
-                    type="text"
+                    type="number"
                     required
-                    placeholder="Contoh: Rp 50.000.000"
+                    placeholder="Contoh: 50000000"
                     className="w-full px-4 py-3 border-2 border-black focus:outline-none focus:ring-0 focus:border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-medium text-black placeholder:text-gray-500 bg-white"
                     value={form.capital}
                     onChange={(e) => setForm({ ...form, capital: e.target.value })}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Cloud, Sun, CloudRain, CloudLightning, ThermometerSun, Loader2, ArrowLeft, Droplets, Wind, Eye, MapPin } from "lucide-react";
+import { Cloud, Sun, CloudRain, CloudLightning, ThermometerSun, Loader2, ArrowLeft, Droplets, Wind, Eye, MapPin, Map as MapIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getDetailedWeatherAdvice } from "../../models/services/gemini";
 import Markdown from "react-markdown";
@@ -8,13 +8,15 @@ export default function CuacaDetail() {
   const [weatherInfo, setWeatherInfo] = useState<any>(null);
   const [advice, setAdvice] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [locationName, setLocationName] = useState("Brebes, Jawa Tengah");
+  const [coords, setCoords] = useState({ lat: -6.8694, lon: 109.0533 });
 
   useEffect(() => {
-    async function loadWeatherDetail() {
+    async function loadWeatherDetail(lat: number, lon: number, locName: string) {
       try {
         let infoText = "";
         try {
-          const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.8694&longitude=109.0533&current_weather=true&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Asia%2FJakarta');
+          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Asia%2FJakarta`);
           if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
           const data = await res.json();
           
@@ -25,7 +27,7 @@ export default function CuacaDetail() {
           
           // Find current humidity from hourly data
           const currentHour = new Date().getHours();
-          const humidity = data.hourly.relative_humidity_2m[currentHour];
+          const humidity = data.hourly.relative_humidity_2m[currentHour] || 0;
           
           let condition = "Cerah";
           if (code > 0 && code <= 3) condition = "Berawan";
@@ -37,6 +39,8 @@ export default function CuacaDetail() {
           setWeatherInfo({
               condition, temp, windSpeed, humidity
           });
+          setLocationName(locName);
+          setCoords({ lat, lon });
         } catch (weatherErr) {
           console.error("Gagal mendapatkan cuaca (Open-Meteo):", weatherErr);
           infoText = "Data cuaca tidak tersedia";
@@ -50,13 +54,7 @@ export default function CuacaDetail() {
           setAdvice(aiAdvice);
         } catch (aiErr: any) {
           console.error("Gagal mendapatkan saran AI:", aiErr);
-          const isQuotaError = aiErr?.message?.includes("429") || aiErr?.message?.includes("RESOURCE_EXHAUSTED") || aiErr?.message?.includes("quota");
-          
-          if (isQuotaError) {
-            setAdvice("Batas penggunaan AI (Quota) telah habis. Analisis cuaca Agri AI tidak dapat dimuat saat ini. Silakan coba lagi nanti.");
-          } else {
-            setAdvice(`Gagal memuat analisis cuaca Agri AI: ${aiErr instanceof Error ? aiErr.message : "Error jaringan"}`);
-          }
+          setAdvice(`Gagal memuat analisis cuaca Agri AI: \n\n${aiErr instanceof Error ? aiErr.message : "Error jaringan"}`);
         }
       } catch (err) {
         console.error("Gagal mendapatkan cuaca detail:", err);
@@ -65,7 +63,31 @@ export default function CuacaDetail() {
       }
     }
 
-    loadWeatherDetail();
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          try {
+             const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=id`);
+             const geoData = await geoRes.json();
+             const city = geoData.city || geoData.locality || "Lokasi Anda";
+             const province = geoData.principalSubdivision || "";
+             const fullName = province ? `${city}, ${province}` : city;
+             loadWeatherDetail(lat, lon, fullName);
+          } catch(e) {
+             loadWeatherDetail(lat, lon, "Lokasi Anda");
+          }
+        },
+        (error) => {
+          console.warn("Geolocation denied or error, fallback to Brebes");
+          loadWeatherDetail(-6.8694, 109.0533, "Brebes, Jawa Tengah");
+        },
+        { timeout: 10000 }
+      );
+    } else {
+      loadWeatherDetail(-6.8694, 109.0533, "Brebes, Jawa Tengah");
+    }
   }, []);
 
   return (
@@ -80,7 +102,7 @@ export default function CuacaDetail() {
         <div className="bg-neo-blue p-8 text-black relative border-b-4 border-black overflow-hidden">
             <div className="relative z-10">
                 <div className="flex items-center gap-2 text-black mb-4 font-black text-sm bg-white border-2 border-black w-fit px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase">
-                    <MapPin className="w-4 h-4" strokeWidth={3} /> Brebes, Jawa Tengah
+                    <MapPin className="w-4 h-4" strokeWidth={3} /> {locationName}
                 </div>
                 
                 {weatherInfo ? (
@@ -113,6 +135,26 @@ export default function CuacaDetail() {
             
             <Cloud className="absolute -bottom-10 -right-10 w-64 h-64 text-black opacity-10" />
             <Sun className="absolute top-10 right-20 w-32 h-32 text-neo-yellow border-black opacity-80" />
+        </div>
+
+        <div className="p-8 bg-white border-b-4 border-black">
+            <h2 className="text-2xl font-black text-black mb-6 flex items-center gap-2 uppercase tracking-tight border-b-4 border-black inline-block pb-1">
+                <MapIcon className="w-6 h-6 text-black" strokeWidth={2.5}/> Peta Cuaca Langsung
+            </h2>
+            <div className="w-full h-[450px] border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-gray-100 overflow-hidden relative">
+               <iframe 
+                width="100%" 
+                height="100%" 
+                src={`https://embed.windy.com/embed2.html?lat=${coords.lat}&lon=${coords.lon}&detailLat=${coords.lat}&detailLon=${coords.lon}&width=650&height=450&zoom=10&level=surface&overlay=rain&product=ecmwf&menu=&message=&marker=true&calendar=now&city=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1`}
+                frameBorder="0"
+                title="Google Maps Interaktif"
+                loading="lazy"
+               ></iframe>
+            </div>
+            <p className="text-sm font-medium text-gray-500 mt-3 flex items-center justify-between">
+                <span>Tekan pada peta untuk melihat detail spesifik per wilayah. Zoom in/out untuk area sekitarnya.</span>
+                <span className="font-bold border-b-2 border-black">Sumber: Windy.com</span>
+            </p>
         </div>
 
         <div className="p-8 bg-white">

@@ -50,19 +50,30 @@ export default function TanyaAI() {
         {/* Chat History */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
           {messages.map((msg, i) => (
-            <div key={i} className={`flex gap-3 md:gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-              <div className={`w-10 h-10 md:w-12 md:h-12 border-2 border-black rounded-lg flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${msg.role === 'user' ? 'bg-neo-blue' : 'bg-neo-yellow'}`}>
-                {msg.role === 'user' ? <User className="w-6 h-6 md:w-7 md:h-7 text-white" /> : <Bot className="w-6 h-6 md:w-7 md:h-7 text-black" />}
-              </div>
-              <div className={`max-w-[75%] md:max-w-[80%] rounded-xl border-2 border-black p-3 md:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${msg.role === 'user' ? 'bg-neo-accent text-white' : 'bg-white text-black'}`}>
-                <div className="prose prose-sm md:prose-base prose-p:leading-relaxed max-w-none">
-                  {msg.role === 'user' ? (
-                    <p className="whitespace-pre-wrap">{msg.text}</p>
-                  ) : (
-                    <ReactMarkdown>{msg.text}</ReactMarkdown>
-                  )}
-                </div>
-              </div>
+            <div key={i} className={`flex w-full gap-3 md:gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              {msg.role === 'user' ? (
+                <>
+                  <div className="max-w-[75%] md:max-w-[80%] rounded-xl border-2 border-black p-3 md:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-neo-primary text-black">
+                    <div className="text-sm md:text-base leading-relaxed whitespace-pre-wrap font-medium">
+                      {msg.text}
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 md:w-12 md:h-12 border-2 border-black rounded-lg flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-white">
+                    <User className="w-6 h-6 md:w-7 md:h-7 text-black" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-10 h-10 md:w-12 md:h-12 border-2 border-black rounded-lg flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-neo-yellow">
+                    <Bot className="w-6 h-6 md:w-7 md:h-7 text-black" />
+                  </div>
+                  <div className="max-w-[75%] md:max-w-[80%] rounded-xl border-2 border-black p-3 md:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white text-black">
+                    <div className="prose prose-sm md:prose-base prose-p:leading-relaxed max-w-none text-black">
+                      <ReactMarkdown>{msg.text}</ReactMarkdown>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           ))}
           {isLoading && (
@@ -95,8 +106,14 @@ export default function TanyaAI() {
               disabled={!input.trim() || isLoading}
               className="px-4 py-3 bg-neo-yellow border-2 border-black rounded-xl hover:bg-yellow-400 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50 disabled:hover:shadow-none flex items-center gap-2"
             >
-              <Send className="w-5 h-5 font-bold" />
-              <span className="font-black uppercase hidden sm:block">Kirim</span>
+              {isLoading ? (
+                <Loader2 className="w-5 h-5 font-bold animate-spin" />
+              ) : (
+                <Send className="w-5 h-5 font-bold" />
+              )}
+              <span className="font-black uppercase hidden sm:block">
+                {isLoading ? 'Mengirim...' : 'Kirim'}
+              </span>
             </button>
           </form>
         </div>

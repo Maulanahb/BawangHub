@@ -2,8 +2,14 @@ import { useState, useEffect } from "react";
 import { getStatistikInsight } from "../models/services/gemini";
 import type { BukuTaniRecord } from "../models/services/gemini";
 
-// Mock data: Tren Harga Bawang Merah 6 Bulan Terakhir & Prediksi (Bulan ke-7)
+// Mock data: Tren Harga Bawang Merah 12 Bulan Terakhir & Prediksi
 export const trenHargaData = [
+  { bulan: "Mei", harga: 15000 },
+  { bulan: "Jun", harga: 16500 },
+  { bulan: "Jul", harga: 14000 },
+  { bulan: "Ags", harga: 14500 },
+  { bulan: "Sep", harga: 16000 },
+  { bulan: "Okt", harga: 17500 },
   { bulan: "Nov", harga: 18000 },
   { bulan: "Des", harga: 20000 },
   { bulan: "Jan", harga: 23000 },

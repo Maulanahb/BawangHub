@@ -8,6 +8,16 @@ if (!API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: API_KEY || "" });
 
+function handleGeminiError(error: any, context: string): never {
+  const errMsg = error?.message || JSON.stringify(error) || String(error);
+  if (errMsg.includes("429") || errMsg.includes("RESOURCE_EXHAUSTED") || errMsg.includes("quota")) {
+    console.warn(`[${context}] AI Quota Exceeded.`);
+    throw new Error("Batas penggunaan AI (Quota) telah habis. Silakan coba lagi nanti.");
+  }
+  console.error(`[${context}] Error:`, error);
+  throw error;
+}
+
 export interface AnalysisResult {
   isHealthy: boolean;
   diseaseName?: string;
@@ -56,8 +66,7 @@ export async function analyzeShallotHealth(base64Image: string, mimeType: string
     
     return JSON.parse(resultText);
   } catch (error) {
-    console.error("Gemini Analysis Error:", error);
-    throw error;
+    handleGeminiError(error, "Gemini Analysis");
   }
 }
 
@@ -110,8 +119,7 @@ export async function predictHarvest(area: string, weather: string, capital: str
     
     return JSON.parse(resultText);
   } catch (error) {
-    console.error("Gemini Prediction Error:", error);
-    throw error;
+    handleGeminiError(error, "Gemini Prediction");
   }
 }
 
@@ -160,8 +168,7 @@ export async function analyzeBukuTani(text: string): Promise<BukuTaniRecord[]> {
     
     return JSON.parse(resultText);
   } catch (error) {
-    console.error("Gemini Buku Tani Error:", error);
-    throw error;
+    handleGeminiError(error, "Gemini Buku Tani");
   }
 }
 
@@ -198,8 +205,7 @@ export async function getWeatherAdvice(weatherInfo: string): Promise<WeatherAdvi
     
     return JSON.parse(resultText);
   } catch (error) {
-    console.error("Gemini Weather Advice Error:", error);
-    throw error;
+    handleGeminiError(error, "Gemini Weather Advice");
   }
 }
 
@@ -228,8 +234,7 @@ export async function getDetailedWeatherAdvice(weatherInfo: string): Promise<str
     
     return resultText;
   } catch (error) {
-    console.error("Gemini Detailed Weather Advice Error:", error);
-    throw error;
+    handleGeminiError(error, "Gemini Detailed Weather Advice");
   }
 }
 
@@ -258,8 +263,7 @@ export async function getStatistikInsight(expensesData: string, trenHarga: strin
     
     return resultText;
   } catch (error) {
-    console.error("Gemini Statistik Insight Error:", error);
-    throw error;
+    handleGeminiError(error, "Gemini Statistik Insight");
   }
 }
 
@@ -293,8 +297,7 @@ export async function getAgriAIReply(threadDetails: string, previousReplies: str
     
     return resultText;
   } catch (error) {
-    console.error("Gemini Forum Bot Error:", error);
-    throw error;
+    handleGeminiError(error, "Gemini Forum Bot");
   }
 }
 
@@ -343,14 +346,61 @@ export async function generateTimeline(startDate: string): Promise<TimelineResul
     
     return JSON.parse(resultText);
   } catch (error) {
-    console.error("Gemini Timeline Error:", error);
-    throw error;
+    handleGeminiError(error, "Gemini Timeline");
   }
 }
 
 export interface ChatMessage {
   role: "user" | "model";
   text: string;
+}
+
+export async function analyzeHistoryChat(history: ChatMessage[], message: string, userDataStr: string): Promise<string> {
+  const model = "gemini-3-flash-preview";
+
+  const systemInstruction = `Kamu adalah pakar pertanian tingkat lanjut bernama Agri AI. 
+Posisikan dirimu sebagai asisten dan konsultan andalan petani bawang merah di Indonesia.
+Kamu memiliki akses ke data riwayat pertanian pengguna:
+${userDataStr}
+
+Bantu mereka meninjau, menganalisis, dan menjawab pertanyaan apa pun tentang data atau aktivitas mereka di platform.`;
+
+  const formattedHistory = history.map(msg => ({
+    role: msg.role === "user" ? "user" : "model",
+    parts: [{ text: msg.text }]
+  }));
+
+  try {
+    const chat = ai.chats.create({
+      model,
+      config: {
+        systemInstruction,
+        temperature: 0.7,
+      }
+    });
+    
+    // Using send_message sequence to ensure history is correctly set up.
+    // wait, google-genai SDK 0.1 for chat doesn't let us easily seed history apart from sending them one by one or using history parameter.
+    // Let's use standard generate content with mapped history to handle this.
+    const contents = [
+      ...formattedHistory,
+      { role: "user", parts: [{ text: message }] }
+    ];
+
+    const result = await ai.models.generateContent({
+      model,
+      contents,
+      config: {
+        systemInstruction,
+        temperature: 0.7,
+      }
+    });
+
+    return result.text || "";
+  } catch (error) {
+    handleGeminiError(error, "Gemini History Chat");
+    return "";
+  }
 }
 
 export async function chatWithAgriAI(history: ChatMessage[], message: string): Promise<string> {
@@ -383,8 +433,7 @@ Gunakan bahasa Indonesia yang jelas, profesional namun tetap santai dan mudah di
     
     return resultText;
   } catch (error) {
-    console.error("Gemini Chat Error:", error);
-    throw error;
+    handleGeminiError(error, "Gemini Chat");
   }
 }
 
