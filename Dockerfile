@@ -12,10 +12,6 @@ RUN npm ci
 # Copy the rest of the application
 COPY . .
 
-# Set up build arguments for Vite environment parsing
-ARG GEMINI_API_KEY
-ENV GEMINI_API_KEY=$GEMINI_API_KEY
-
 # Build the Vite application (outputs to /dist)
 RUN npm run build
 
