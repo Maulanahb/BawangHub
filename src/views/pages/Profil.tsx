@@ -214,12 +214,14 @@ ${history.map((h, i) => {
       <div className="grid md:grid-cols-2 gap-8 items-start">
         <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 overflow-hidden relative">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 bg-neo-yellow border-4 border-black text-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div className="w-16 h-16 shrink-0 bg-neo-yellow border-4 border-black text-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <UserCircle className="w-10 h-10" strokeWidth={2.5} />
             </div>
-            <div>
-              <h2 className="text-2xl font-black text-black uppercase">{profile.name || "Petani Bawang"}</h2>
-              <p className="text-black font-bold border-2 border-black bg-neo-primary px-2 py-0.5 inline-block text-sm">{profile.email}</p>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-xl sm:text-2xl font-black text-black uppercase leading-tight line-clamp-2" title={profile.name || "Petani Bawang"}>{profile.name || "Petani Bawang"}</h2>
+              <div className="mt-1">
+                <p className="text-black font-bold border-2 border-black bg-neo-primary px-2 py-0.5 inline-block text-xs sm:text-sm truncate max-w-full align-middle" title={profile.email}>{profile.email}</p>
+              </div>
             </div>
           </div>
 
@@ -235,10 +237,11 @@ ${history.map((h, i) => {
               />
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-black text-black uppercase mb-2 flex items-center gap-1">
-                  <Ruler className="w-4 h-4 text-black" strokeWidth={3} /> Luas Lahan <span className="lowercase normal-case">(m²)</span>
+                <label className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-black text-black uppercase mb-2">
+                  <Ruler className="w-4 h-4 text-black shrink-0" strokeWidth={3} /> 
+                  <span className="truncate">Luas Lahan <span className="lowercase normal-case">(m²)</span></span>
                 </label>
                 <input
                   type="number"
@@ -249,8 +252,9 @@ ${history.map((h, i) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-black text-black uppercase mb-2 flex items-center gap-1">
-                  <MapPin className="w-4 h-4 text-black" strokeWidth={3} /> Domisili/Lokasi
+                <label className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-black text-black uppercase mb-2">
+                  <MapPin className="w-4 h-4 text-black shrink-0" strokeWidth={3} /> 
+                  <span className="truncate">Domisili / Lokasi</span>
                 </label>
                 <input
                   type="text"
@@ -279,25 +283,25 @@ ${history.map((h, i) => {
           </form>
         </div>
 
-        <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
-          <h3 className="text-2xl font-black text-black uppercase tracking-tight mb-4 flex items-center gap-2 border-b-4 border-black pb-2 inline-block">
-            <FileText className="w-6 h-6 text-black" strokeWidth={3} /> Histori Saya
+        <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6 overflow-hidden relative">
+          <h3 className="text-xl sm:text-2xl font-black text-black uppercase tracking-tight mb-4 flex items-center gap-2 border-b-4 border-black pb-2 inline-block">
+            <FileText className="w-6 h-6 text-black shrink-0" strokeWidth={3} /> Histori Saya
           </h3>
           
           {history.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-3 mb-6 bg-neo-primary p-4 border-4 border-black border-dashed">
+            <div className="flex flex-col 2xl:flex-row gap-3 mb-6 bg-neo-primary p-3 sm:p-4 border-4 border-black border-dashed">
               <input
                 type="text"
                 placeholder="Cari riwayat..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 w-full border-2 border-black px-3 py-2 text-sm font-medium focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
+                className="w-full 2xl:flex-1 min-w-0 border-2 border-black px-3 py-2 text-sm font-medium focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
               />
-              <div className="flex gap-2 w-full sm:w-auto">
+              <div className="flex gap-2 w-full 2xl:w-auto">
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
-                  className="w-1/2 sm:w-auto border-2 border-black px-3 py-2 text-sm font-bold bg-white focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
+                  className="flex-1 min-w-0 border-2 border-black px-2 py-2 text-sm font-bold bg-white focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
                 >
                   <option value="all">Semua</option>
                   <option value="kalkulator">Kalkulator</option>
@@ -307,7 +311,7 @@ ${history.map((h, i) => {
                 <select
                   value={sortOrder}
                   onChange={(e) => setSortOrder(e.target.value as "desc" | "asc")}
-                  className="w-1/2 sm:w-auto border-2 border-black px-3 py-2 text-sm font-bold bg-white focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
+                  className="flex-1 min-w-0 border-2 border-black px-2 py-2 text-sm font-bold bg-white focus:ring-0 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] outline-none"
                 >
                   <option value="desc">Terbaru</option>
                   <option value="asc">Terlama</option>
@@ -322,24 +326,24 @@ ${history.map((h, i) => {
                 <>
                   <div className="space-y-4">
                     {paginatedHistory.map(item => (
-                      <div key={item.id} className="p-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-neo-primary hover:bg-white transition-colors">
-                        <div className="flex justify-between items-start mb-2">
-                          <span className={`text-xs font-black uppercase border-2 border-black text-black px-2 py-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${item.type === 'kalkulator' ? 'bg-neo-blue' : 'bg-neo-green'}`}>
+                      <div key={item.id} className="p-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-neo-primary hover:bg-white transition-colors relative overflow-hidden">
+                        <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
+                          <span className={`text-xs font-black uppercase border-2 border-black text-black px-2 py-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] whitespace-nowrap ${item.type === 'kalkulator' ? 'bg-neo-blue' : 'bg-neo-green'}`}>
                             {item.type === 'kalkulator' ? 'Kalkulator' : 'Klinik AI'}
                           </span>
-                          <span className="text-xs text-black font-bold bg-white border border-black px-2 py-0.5">
+                          <span className="text-xs text-black font-bold bg-white border border-black px-2 py-0.5 whitespace-nowrap">
                             {item.createdAt?.toDate ? item.createdAt.toDate().toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric'}) : 'Baru saja'}
                           </span>
                         </div>
-                        <h4 className="font-black text-black text-lg mb-1 uppercase tracking-tight">{item.title}</h4>
-                        <p className="text-sm font-medium text-black line-clamp-2 leading-relaxed">
+                        <h4 className="font-black text-black text-lg mb-1 uppercase tracking-tight break-words line-clamp-2">{item.title}</h4>
+                        <p className="text-sm font-medium text-black line-clamp-2 leading-relaxed break-words">
                           {item.type === 'kalkulator' ? `Est. Panen: ${item.data.estimatedYieldMin || 0} - ${item.data.estimatedYieldMax || 0} Ton | Modal: Rp ${Number(item.data.inputCapital || 0).toLocaleString('id-ID')}` : item.data.solusi || item.data.details || 'Analisis penyakit'}
                         </p>
                       </div>
                     ))}
                   </div>
                   {totalPages > 1 && (
-                    <div className="flex justify-center items-center gap-4 mt-6">
+                    <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mt-6 text-sm sm:text-base">
                       <button 
                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                         disabled={currentPage === 1}
@@ -379,7 +383,7 @@ ${history.map((h, i) => {
       </div>
 
       {/* AI Chat History Section */}
-      <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6 mt-8 flex flex-col h-[600px] animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+      <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6 mt-8 flex flex-col h-[70vh] min-h-[500px] max-h-[700px] animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
         <div className="flex items-center gap-3 border-b-4 border-black pb-4 shrink-0">
           <div className="w-12 h-12 bg-neo-yellow border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             <Bot className="w-7 h-7 text-black" />

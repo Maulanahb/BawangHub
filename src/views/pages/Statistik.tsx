@@ -71,7 +71,7 @@ export default function Statistik() {
                   tickFormatter={(val) => `Rp${val/1000}k`}
                 />
                 <RechartsTooltip 
-                  formatter={(value: number) => [formatRupiah(value), "Harga"]}
+                  formatter={(value: number, name: string) => [formatRupiah(value), name === 'harga' ? 'Harga Aktual' : 'Prediksi Harga']}
                   contentStyle={{ borderRadius: '0px', border: '4px solid #000', boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)', backgroundColor: '#fff', fontWeight: 900 }}
                   labelStyle={{ color: '#000', fontWeight: 900, marginBottom: '4px', textTransform: 'uppercase' }}
                 />
@@ -79,11 +79,21 @@ export default function Statistik() {
                 <Line 
                   type="monotone" 
                   dataKey="harga" 
-                  name="Harga Pasar" 
+                  name="Harga Aktual" 
                   stroke="#000" 
                   strokeWidth={4} 
                   dot={{ r: 6, fill: '#fff', stroke: '#000', strokeWidth: 3 }} 
                   activeDot={{ r: 8, fill: '#ff00ff', stroke: '#000', strokeWidth: 3 }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="hargaPrediksi" 
+                  name="Prediksi Harga" 
+                  stroke="#3b82f6" 
+                  strokeWidth={4} 
+                  strokeDasharray="8 8"
+                  dot={{ r: 6, fill: '#fff', stroke: '#3b82f6', strokeWidth: 3 }} 
+                  activeDot={{ r: 8, fill: '#ff00ff', stroke: '#3b82f6', strokeWidth: 3 }} 
                 />
               </LineChart>
             </ResponsiveContainer>

@@ -21,6 +21,19 @@ import {
 import { useAuth } from "../components/AuthProvider";
 import { Thread } from "../../types/forum";
 import { MessageSquare, Plus, Loader2, Trash2 } from "lucide-react";
+import { Badge } from "../../components/Badge";
+
+// Helper for gamification points
+const getUserPoints = (userId: string) => {
+  if (userId === "bawang-bot") return 0;
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return Math.abs(hash % 900) + 100; // 100 to 1000 points
+};
+
+const isExpert = (points: number) => points >= 500;
 
 export default function Forum() {
   const { user, isAdmin } = useAuth();
@@ -211,11 +224,23 @@ export default function Forum() {
                 <p className="text-black font-medium mt-2 line-clamp-2 text-sm border-l-2 border-black pl-3">
                   {thread.isi_pesan}
                 </p>
-                <div className="flex items-center gap-2 mt-4 text-xs font-bold text-black">
-                  <span className="bg-neo-accent text-black border-2 border-black px-2 py-1">
+                <div className="flex flex-wrap items-center gap-2 mt-4 text-xs font-bold text-black">
+                  <span className="bg-neo-accent text-black border-2 border-black px-2 py-1 uppercase tracking-tight">
                     {thread.userName}
                   </span>
-                  <span>•</span>
+                  
+                  {isExpert(getUserPoints(thread.userId)) && (
+                    <Badge variant="expert" title={`${getUserPoints(thread.userId)} Poin Jawaban`}>
+                      ★ PETANI PAKAR
+                    </Badge>
+                  )}
+                  {!isExpert(getUserPoints(thread.userId)) && (
+                    <Badge variant="outline" title={`${getUserPoints(thread.userId)} Poin Jawaban`}>
+                      {getUserPoints(thread.userId)} Pts
+                    </Badge>
+                  )}
+
+                  <span className="hidden sm:inline">•</span>
                   <span className="bg-white text-black border-2 border-black px-2 py-1">
                     {thread.createdAt?.toDate
                       ? thread.createdAt

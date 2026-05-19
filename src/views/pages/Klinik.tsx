@@ -79,15 +79,15 @@ export default function Klinik() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       <div>
         <h1 className="text-4xl md:text-5xl font-black tracking-tight text-black uppercase" style={{ letterSpacing: "-0.05em" }}>Klinik Bawang</h1>
-        <p className="text-black font-medium mt-2 text-lg border-l-4 border-black pl-4">
-          Upload foto daun bawang merah Anda, AI akan mendiagnosis penyakitnya.
+        <p className="text-black text-lg mt-2">
+          Cek penyakit daun bawang merah Anda lewat foto.
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         {/* Upload Column */}
         <div className="space-y-4">
-          <div className="border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-neo-yellow hover:bg-neo-blue transition-colors text-center cursor-pointer relative p-8 group">
+          <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-neo-yellow hover:bg-neo-green hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 transition-all text-center cursor-pointer relative p-12 lg:p-20 group">
             <input
               type="file"
               accept="image/*"
@@ -95,28 +95,30 @@ export default function Klinik() {
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             />
             {preview ? (
-              <div className="border-4 border-black inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
+              <div className="border-4 border-black inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white relative z-20">
                 <img src={preview} alt="Preview" className="mx-auto max-h-64 object-cover" />
               </div>
             ) : (
-              <div className="flex flex-col items-center py-6 text-black">
-                <div className="w-16 h-16 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center mb-4 group-hover:-translate-y-1 transition-transform">
-                    <UploadCloud className="w-8 h-8 text-black" strokeWidth={2.5} />
+              <div className="flex flex-col items-center justify-center text-black space-y-6">
+                <div className="w-24 h-24 border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center group-hover:-translate-y-2 transition-transform">
+                    <UploadCloud className="w-12 h-12 text-black" strokeWidth={3} />
                 </div>
-                <p className="text-lg font-bold text-black uppercase tracking-tight">Pilih Foto Daun</p>
-                <p className="text-xs font-bold bg-white border-2 border-black px-2 py-0.5 mt-2">JPEG, PNG up to 5MB</p>
+                <div className="space-y-1">
+                   <p className="text-2xl font-black uppercase tracking-tight">Tap / Klik Di Sini</p>
+                   <p className="font-bold text-sm">Ambil Foto Daun</p>
+                </div>
               </div>
             )}
           </div>
           
           <button 
-            className="w-full bg-neo-accent border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none text-black font-black uppercase tracking-tight py-4 text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center" 
+            className="w-full bg-neo-accent border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none text-black font-black uppercase tracking-tight py-4 text-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center" 
             disabled={!file || loading}
             onClick={handleAnalyze}
           >
             {loading ? (
               <>
-                <Loader2 className="w-6 h-6 mr-3 animate-spin" strokeWidth={3} /> Menganalisis...
+                <Loader2 className="w-8 h-8 mr-3 animate-spin" strokeWidth={3} /> Memeriksa...
               </>
             ) : (
               "Diagnosis Sekarang"

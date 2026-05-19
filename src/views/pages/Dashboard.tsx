@@ -182,80 +182,80 @@ export default function Dashboard() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
         <Card className="group flex flex-col bg-neo-green border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
           <CardHeader>
-            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <LeafyGreen className="w-8 h-8" />
+            <div className="w-20 h-20 bg-white border-4 border-black flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <LeafyGreen className="w-12 h-12" />
             </div>
-            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Klinik Bawang</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
-              Analisis penyakit daun bawang merah Anda lewat foto. Cukup upload foto, biarkan AI yang mendiagnosis penyakitnya.
+            <CardTitle className="text-2xl font-black uppercase text-black tracking-tight">Klinik</CardTitle>
+            <CardDescription className="text-black font-medium mt-2">
+              Scan daun sakit dengan kamera.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/klinik"
-              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+              className="w-full flex justify-center items-center text-lg font-black uppercase text-black border-4 border-black bg-white px-4 py-3 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
             >
-              Coba Sekarang <ArrowRight className="ml-2 w-4 h-4" />
+              Scan Foto <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </CardContent>
         </Card>
 
         <Card className="group flex flex-col bg-neo-blue border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
           <CardHeader>
-            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <Calculator className="w-8 h-8" />
+            <div className="w-20 h-20 bg-white border-4 border-black flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Calculator className="w-12 h-12" />
             </div>
-            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Kalkulator Panen</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
-              Hitung estimasi panen, prediksi harga jual, dan terima panduan strategi pasar cerdas berdasarkan luas lahan dan cuaca.
+            <CardTitle className="text-2xl font-black uppercase text-black tracking-tight">Kalkulator</CardTitle>
+            <CardDescription className="text-black font-medium mt-2">
+              Hitung panen & harga.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/kalkulator"
-              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+              className="w-full flex justify-center items-center text-lg font-black uppercase text-black border-4 border-black bg-white px-4 py-3 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
             >
-              Mulai Hitung <ArrowRight className="ml-2 w-4 h-4" />
+              Mulai Hitung <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </CardContent>
         </Card>
 
         <Card className="group flex flex-col bg-neo-yellow border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
           <CardHeader>
-            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <CalendarDays className="w-8 h-8" />
+            <div className="w-20 h-20 bg-white border-4 border-black flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <CalendarDays className="w-12 h-12" />
             </div>
-            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Jadwal Tanam</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
-              Masukan tanggal tanam dan AI akan merumuskan timeline harian kapan harus memupuk, menyemprot, dan panen.
+            <CardTitle className="text-2xl font-black uppercase text-black tracking-tight">Jadwal</CardTitle>
+            <CardDescription className="text-black font-medium mt-2">
+              Kapan pupuk & semprot?
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/jadwal"
-              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+              className="w-full flex justify-center items-center text-lg font-black uppercase text-black border-4 border-black bg-white px-4 py-3 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
             >
-              Buat Jadwal <ArrowRight className="ml-2 w-4 h-4" />
+              Buat Jadwal <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </CardContent>
         </Card>
 
         <Card className="group flex flex-col bg-neo-pink border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
           <CardHeader>
-            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <BookOpen className="w-8 h-8" />
+            <div className="w-20 h-20 bg-white border-4 border-black flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <BookOpen className="w-12 h-12" />
             </div>
-            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Buku Tani Cerdas</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
-              Catat pengeluaran dan pemasukan dengan bahasa layaknya SMS, biarkan AI mengekstrak nilainya ke tabel database.
+            <CardTitle className="text-2xl font-black uppercase text-black tracking-tight">Buku Tani</CardTitle>
+            <CardDescription className="text-black font-medium mt-2">
+              Catat jual beli harian.
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link
               to="/bukutani"
-              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+              className="w-full flex justify-center items-center text-lg font-black uppercase text-black border-4 border-black bg-white px-4 py-3 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
             >
-              Buka Buku <ArrowRight className="ml-2 w-4 h-4" />
+              Buka Buku <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </CardContent>
         </Card>

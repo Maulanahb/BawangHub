@@ -7,6 +7,19 @@ import { Thread, Reply } from "../../types/forum";
 import { getAgriAIReply } from "../../models/services/gemini";
 import { ArrowLeft, Send, Loader2, Bot, User as UserIcon, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { Badge } from "../../components/Badge";
+
+// Helper for gamification points
+const getUserPoints = (userId: string) => {
+  if (userId === "bawang-bot") return 0;
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return Math.abs(hash % 900) + 100; // 100 to 1000 points
+};
+
+const isExpert = (points: number) => points >= 500;
 
 export default function ForumDetail() {
   const { id } = useParams<{ id: string }>();
@@ -180,14 +193,26 @@ export default function ForumDetail() {
           <h1 className="text-3xl sm:text-4xl font-black text-black tracking-tight uppercase leading-tight">
             {thread.judul}
           </h1>
-          <div className="flex items-center gap-3 mt-4 text-sm text-black border-b-4 border-black pb-6 font-bold">
+          <div className="flex flex-wrap items-center gap-3 mt-4 text-sm text-black border-b-4 border-black pb-6 font-bold">
             <div className="w-8 h-8 bg-neo-yellow border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center text-black">
               {thread.userName.charAt(0).toUpperCase()}
             </div>
-            <div>
-              <span className="font-bold text-black">{thread.userName}</span>
-              <span className="mx-2">•</span>
-              <span className="bg-neo-accent border-2 border-black px-2 py-0.5">{thread.createdAt?.toDate ? thread.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-bold text-black uppercase">{thread.userName}</span>
+              
+              {isExpert(getUserPoints(thread.userId)) && (
+                <Badge variant="expert" title={`${getUserPoints(thread.userId)} Poin Jawaban`}>
+                  ★ PETANI PAKAR
+                </Badge>
+              )}
+              {!isExpert(getUserPoints(thread.userId)) && (
+                <Badge variant="outline" title={`${getUserPoints(thread.userId)} Poin Jawaban`}>
+                  {getUserPoints(thread.userId)} Pts
+                </Badge>
+              )}
+
+              <span className="mx-2 hidden sm:inline">•</span>
+              <span className="bg-neo-accent border-2 border-black px-2 py-0.5 whitespace-nowrap">{thread.createdAt?.toDate ? thread.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</span>
             </div>
           </div>
           <div className="mt-6 text-black font-medium leading-relaxed whitespace-pre-wrap">
@@ -212,13 +237,25 @@ export default function ForumDetail() {
                   <span className={`font-black text-sm uppercase ${reply.is_ai_generated ? 'text-black' : 'text-black'}`}>
                     {reply.userName}
                   </span>
+                  
+                  {!reply.is_ai_generated && isExpert(getUserPoints(reply.userId)) && (
+                    <Badge variant="expert" title={`${getUserPoints(reply.userId)} Poin Jawaban`}>
+                      ★ PETANI PAKAR
+                    </Badge>
+                  )}
+                  {!reply.is_ai_generated && !isExpert(getUserPoints(reply.userId)) && (
+                    <Badge variant="outline" title={`${getUserPoints(reply.userId)} Poin Jawaban`}>
+                      {getUserPoints(reply.userId)} Pts
+                    </Badge>
+                  )}
+
                   <span className="text-xs text-black font-bold border-2 border-black bg-white px-2 py-0.5">
                     {reply.createdAt?.toDate ? reply.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}
                   </span>
                   {reply.is_ai_generated && (
-                    <span className="bg-neo-accent text-black text-[10px] px-2 py-0.5 border-2 border-black font-black uppercase tracking-wider">
+                    <Badge variant="ai">
                       AI ASSIST
-                    </span>
+                    </Badge>
                   )}
                 </div>
                 {/* if it's AI, use markdown */}
