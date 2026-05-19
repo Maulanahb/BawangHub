@@ -1,9 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 
-const API_KEY = process.env.GEMINI_API_KEY;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!API_KEY) {
-  console.warn("GEMINI_API_KEY is not defined. AI features will not work.");
+  console.warn("VITE_GEMINI_API_KEY is not defined. AI features will not work.");
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY || "" });
@@ -27,7 +27,7 @@ export interface AnalysisResult {
 }
 
 export async function analyzeShallotHealth(base64Image: string, mimeType: string): Promise<AnalysisResult> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
   
   const prompt = `
     Anda adalah ahli patologi tanaman spesialis bawang merah (shallot).
@@ -79,7 +79,7 @@ export interface PredictionResult {
 }
 
 export async function predictHarvest(area: string, weather: string, capital: string): Promise<PredictionResult> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
 
   const prompt = `
     Anda adalah ahli agronomi dan ekonomi pertanian spesialis bawang merah.
@@ -143,7 +143,7 @@ export interface BukuTaniRecord {
 }
 
 export async function analyzeBukuTani(text: string): Promise<BukuTaniRecord[]> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
 
   const prompt = `
     Ekstrak data keuangan dari cerita atau catatan petani berikut.
@@ -179,7 +179,7 @@ export interface WeatherAdvice {
 }
 
 export async function getWeatherAdvice(weatherInfo: string): Promise<WeatherAdvice> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
 
   const prompt = `
     Cuaca di lahan pertanian saat ini: ${weatherInfo}
@@ -210,7 +210,7 @@ export async function getWeatherAdvice(weatherInfo: string): Promise<WeatherAdvi
 }
 
 export async function getDetailedWeatherAdvice(weatherInfo: string): Promise<string> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
 
   const prompt = `
     Cuaca di lahan pertanian bawang merah saat ini: ${weatherInfo}
@@ -239,7 +239,7 @@ export async function getDetailedWeatherAdvice(weatherInfo: string): Promise<str
 }
 
 export async function getStatistikInsight(expensesData: string, trenHarga: string): Promise<string> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
 
   const prompt = `
     Kamu adalah analis ekonomi pertanian. Baca data pengeluaran dan tren harga bawang merah berikut. 
@@ -268,7 +268,7 @@ export async function getStatistikInsight(expensesData: string, trenHarga: strin
 }
 
 export async function getAgriAIReply(threadDetails: string, previousReplies: string, newMessage: string): Promise<string> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
   
   const prompt = `
     Kamu adalah pakar pertanian bernama Agri AI. Pengguna memanggilmu di Forum Tani.
@@ -302,7 +302,7 @@ export async function getAgriAIReply(threadDetails: string, previousReplies: str
 }
 
 export async function generateTimeline(startDate: string): Promise<TimelineResult> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
 
   const prompt = `
     Anda adalah ahli agronomi spesialis budidaya bawang merah.
@@ -356,7 +356,7 @@ export interface ChatMessage {
 }
 
 export async function analyzeHistoryChat(history: ChatMessage[], message: string, userDataStr: string): Promise<string> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
 
   const systemInstruction = `Kamu adalah pakar pertanian tingkat lanjut bernama Agri AI. 
 Posisikan dirimu sebagai asisten dan konsultan andalan petani bawang merah di Indonesia.
@@ -404,7 +404,7 @@ Bantu mereka meninjau, menganalisis, dan menjawab pertanyaan apa pun tentang dat
 }
 
 export async function chatWithAgriAI(history: ChatMessage[], message: string): Promise<string> {
-  const model = "gemini-3-flash-preview";
+  const model = "gemini-2.0-flash";
 
   const systemInstruction = `Kamu adalah pakar pertanian tingkat lanjut bernama Agri AI. 
 Posisikan dirimu sebagai asisten dan konsultan andalan petani bawang merah di Indonesia, khususnya di Jawa. 

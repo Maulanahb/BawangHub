@@ -28,9 +28,20 @@ export default function Dashboard() {
       try {
         let infoText = "";
         try {
-          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-          const data = await res.json();
+          let data;
+          try {
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            data = await res.json();
+          } catch (e) {
+            console.warn("Direct fetch failed, trying proxy...", e);
+            const proxyUrl = "https://api.allorigins.win/raw?url=";
+            const targetUrl = encodeURIComponent(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+            const res = await fetch(proxyUrl + targetUrl);
+            if (!res.ok) throw new Error(`HTTP error from proxy! status: ${res.status}`);
+            data = await res.json();
+          }
+          
           const temp = data.current_weather.temperature;
           const code = data.current_weather.weathercode;
           

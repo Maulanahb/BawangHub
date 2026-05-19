@@ -16,9 +16,19 @@ export default function CuacaDetail() {
       try {
         let infoText = "";
         try {
-          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Asia%2FJakarta`);
-          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-          const data = await res.json();
+          let data;
+          try {
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Asia%2FJakarta`);
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            data = await res.json();
+          } catch (e) {
+            console.warn("Direct fetch failed, trying proxy...", e);
+            const proxyUrl = "https://api.allorigins.win/raw?url=";
+            const targetUrl = encodeURIComponent(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=Asia%2FJakarta`);
+            const res = await fetch(proxyUrl + targetUrl);
+            if (!res.ok) throw new Error(`HTTP error from proxy! status: ${res.status}`);
+            data = await res.json();
+          }
           
           const current = data.current_weather;
           const temp = current.temperature;
