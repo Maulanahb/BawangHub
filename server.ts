@@ -29,7 +29,7 @@ app.post("/api/gemini/generate", async (req, res) => {
   if (!ai) return res.status(500).json({ error: "Gemini not configured" });
   try {
     const { prompt, isJson, inlineData } = req.body;
-    const model = "gemini-2.0-flash";
+    const model = "gemini-3.5-flash";
     
     const parts: any[] = [{ text: prompt }];
     if (inlineData) {
@@ -45,7 +45,11 @@ app.post("/api/gemini/generate", async (req, res) => {
     res.json({ text: response.text });
   } catch (error: any) {
     console.error("AI Error", error);
-    res.status(500).json({ error: error?.message || 'AI Error' });
+    let errorMsg = error?.message || 'AI Error';
+    if (errorMsg.includes("429") || errorMsg.includes("quota") || errorMsg.includes("RESOURCE_EXHAUSTED")) {
+      errorMsg = "Batas penggunaan API Gemini harian/menit Anda telah terlampaui. Mohon tunggu beberapa saat atau gunakan API key dengan kuota yang lebih tinggi.";
+    }
+    res.status(500).json({ error: errorMsg });
   }
 });
 
@@ -53,7 +57,7 @@ app.post("/api/gemini/chat", async (req, res) => {
   if (!ai) return res.status(500).json({ error: "Gemini not configured" });
   try {
     const { history, message, systemInstruction } = req.body;
-    const model = "gemini-2.0-flash";
+    const model = "gemini-3.5-flash";
     
     // Format history
     const formattedHistory = history.map((msg: any) => ({
@@ -78,7 +82,11 @@ app.post("/api/gemini/chat", async (req, res) => {
     res.json({ text: response.text });
   } catch (error: any) {
     console.error("AI Error", error);
-    res.status(500).json({ error: error?.message || 'AI Error' });
+    let errorMsg = error?.message || 'AI Error';
+    if (errorMsg.includes("429") || errorMsg.includes("quota") || errorMsg.includes("RESOURCE_EXHAUSTED")) {
+      errorMsg = "Batas penggunaan API Gemini harian/menit Anda telah terlampaui. Mohon tunggu beberapa saat atau gunakan API key dengan kuota yang lebih tinggi.";
+    }
+    res.status(500).json({ error: errorMsg });
   }
 });
 
