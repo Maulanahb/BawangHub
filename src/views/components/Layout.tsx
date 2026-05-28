@@ -4,7 +4,6 @@ import { LayoutDashboard, LeafyGreen, Calculator, CalendarDays, BookOpen, BarCha
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useAuth } from "./AuthProvider";
-import { BawangLogo } from "./BawangLogo";
 import { JavaneseFarmerSVG } from "./Illustrations";
 
 function cn(...inputs: ClassValue[]) {
@@ -47,7 +46,7 @@ export default function Layout() {
   const showBackButton = pathLevel > 0 && !isTopLevelNav;
 
   return (
-    <div className="h-screen w-full bg-neo-bg flex overflow-hidden">
+    <div className="h-screen w-full bg-agri-bg flex overflow-hidden">
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div 
@@ -58,16 +57,15 @@ export default function Layout() {
 
       {/* Sidebar */}
       <div className={cn(
-        "bg-white border-r-4 border-black flex flex-col h-full z-50 transition-transform duration-300 ease-in-out fixed md:relative w-64 md:translate-x-0",
+        "bg-white border-r border-gray-200 flex flex-col h-full z-50 transition-transform duration-300 ease-in-out fixed md:relative w-64 md:translate-x-0",
         isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="h-16 flex items-center justify-between px-6 border-b-4 border-black bg-neo-accent shrink-0">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200 bg-white shrink-0">
           <div className="flex items-center">
-            <BawangLogo className="w-6 h-6 text-black mr-2" />
-            <span className="text-2xl font-bold text-black tracking-tight" style={{ letterSpacing: "-0.05em" }}>BawangHub</span>
+            <span className="text-xl font-bold text-gray-800 tracking-tight">BawangHub</span>
           </div>
-          <button onClick={closeMobileMenu} className="md:hidden">
-            <X className="w-6 h-6 text-black" />
+          <button onClick={closeMobileMenu} className="md:hidden text-gray-500 hover:text-gray-800">
+            <X className="w-6 h-6" />
           </button>
         </div>
         <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
@@ -81,64 +79,61 @@ export default function Layout() {
                 to={item.href}
                 onClick={closeMobileMenu}
                 className={cn(
-                  "flex items-center px-3 py-3 text-sm font-black border-2 transition-all",
+                  "flex items-center px-3 py-3 rounded-xl text-sm font-medium transition-all",
                   isActive
-                    ? "bg-neo-yellow border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[2px] -translate-y-[2px]"
-                    : "border-transparent text-black hover:bg-neo-primary hover:border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px]"
+                    ? "bg-agri-green-light text-agri-green-dark"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 )}
               >
                 <item.icon
                   className={cn(
                     "mr-3 flex-shrink-0 h-5 w-5",
-                    isActive ? "text-black" : "text-black"
+                    isActive ? "text-agri-green-dark" : "text-gray-400"
                   )}
-                  strokeWidth={isActive ? 2.5 : 2}
+                  strokeWidth={isActive ? 2 : 1.5}
                 />
                 {item.name}
               </Link>
             );
           })}
           
-          {/* Decorative Vector Graphic Placement (Sidebar Bottom) */}
-          <div className="mt-8 mb-4 border-2 border-black bg-[#FFEAA7] p-4 text-center relative overflow-hidden group">
-            <div className="absolute inset-0 bg-neo-yellow opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="w-20 h-20 bg-white border-2 border-black rounded-xl mb-3 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-3 group-hover:rotate-0 transition-all">
-                 <JavaneseFarmerSVG className="w-16 h-16" />
-              </div>
-              <p className="font-black text-black text-sm uppercase">Agri AI</p>
-              <p className="text-xs font-bold text-gray-700 mt-1 whitespace-nowrap overflow-hidden text-ellipsis w-full">Asisten Petani Lokal</p>
-            </div>
-          </div>
         </nav>
         
         {user ? (
-          <div className="p-4 border-t-4 border-black bg-white shrink-0">
+          <div className="p-4 border-t border-gray-200 bg-white shrink-0">
+            <div className="px-3 mb-4">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user.displayName || 'Petani Bawang'}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {user.email}
+              </p>
+            </div>
             <Link 
               to="/profil" 
               onClick={closeMobileMenu}
               className={cn(
-                "flex items-center px-3 py-3 text-sm font-black border-2 mb-2 transition-all", 
+                "flex items-center px-3 py-3 rounded-xl text-sm font-medium mb-2 transition-all", 
                 location.pathname.startsWith('/profil') 
-                  ? "bg-neo-yellow border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[2px] -translate-y-[2px]" 
-                  : "border-transparent text-black hover:bg-neo-primary hover:border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px]"
+                  ? "bg-agri-green-light text-agri-green-dark" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               )}
             >
-              <UserCircle className="mr-3 flex-shrink-0 h-5 w-5 text-black" strokeWidth={location.pathname.startsWith('/profil') ? 2.5 : 2} /> Profil Saya
+              <UserCircle className={cn("mr-3 flex-shrink-0 h-5 w-5", location.pathname.startsWith('/profil') ? "text-agri-green-dark" : "text-gray-400")} strokeWidth={location.pathname.startsWith('/profil') ? 2 : 1.5} /> Profil Saya
             </Link>
             <button 
               onClick={() => { logOut(); closeMobileMenu(); }}
-              className="flex items-center w-full px-3 py-3 text-sm font-bold border-2 border-transparent text-black hover:bg-red-400 hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+              className="flex items-center w-full px-3 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-all"
             >
-              <LogOut className="mr-3 flex-shrink-0 h-5 w-5 text-black" strokeWidth={2.5}/> Keluar
+              <LogOut className="mr-3 flex-shrink-0 h-5 w-5 text-red-500" strokeWidth={1.5}/> Keluar
             </button>
           </div>
         ) : (
-          <div className="p-4 border-t-4 border-black bg-neo-primary shrink-0">
+          <div className="p-4 border-t border-gray-200 bg-white shrink-0">
             <Link 
               to="/login" 
               onClick={closeMobileMenu}
-              className="flex items-center justify-center w-full px-3 py-3 text-sm font-bold text-black border-2 border-black bg-neo-accent shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              className="flex items-center justify-center w-full px-4 py-3 rounded-xl text-sm font-semibold text-white bg-agri-green hover:bg-agri-green-dark shadow-sm transition-all"
             >
                Masuk / Daftar
             </Link>
@@ -148,25 +143,24 @@ export default function Layout() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        <div className="md:hidden h-16 border-b-4 border-black bg-neo-accent flex items-center justify-between px-4 shrink-0 shadow-sm relative z-20 w-full">
+        <div className="md:hidden h-16 border-b border-gray-200 bg-white flex items-center justify-between px-4 shrink-0 shadow-sm relative z-20 w-full">
           <div className="flex items-center gap-3">
             {showBackButton ? (
               <button 
                 onClick={() => navigate(-1)}
-                className="p-1 border-2 border-black rounded-full bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                className="p-1.5 rounded-full text-gray-500 hover:bg-gray-100 transition-colors"
               >
-                <ChevronLeft className="w-5 h-5 text-black" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
             ) : (
-              <button onClick={toggleMobileMenu} className="p-1 border-2 border-black rounded bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none">
-                <Menu className="w-5 h-5 text-black" />
+              <button onClick={toggleMobileMenu} className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
+                <Menu className="w-5 h-5" />
               </button>
             )}
             <div className="flex items-center">
-              <span className="text-xl font-bold text-black tracking-tight leading-none pt-1">BawangHub</span>
+              <span className="text-lg font-semibold text-gray-800 tracking-tight leading-none pt-1">BawangHub</span>
             </div>
           </div>
-          <BawangLogo className="w-6 h-6 text-black" />
         </div>
         <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto w-full">
           <div className="max-w-4xl mx-auto">

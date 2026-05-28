@@ -50,7 +50,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col mb-8">
-        <h1 className="text-4xl md:text-5xl font-black text-slate-800 uppercase tracking-tight mb-2" style={{ letterSpacing: "-0.05em" }}>
+        <h1 className="text-4xl md:text-5xl font-semibold text-slate-800 tracking-tight mb-2">
           Admin Panel
         </h1>
         <p className="border-l-4 border-slate-800 pl-4 text-slate-700 font-bold max-w-2xl">
@@ -64,37 +64,37 @@ export default function AdminDashboard() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-slate-800 text-white p-6 border-4 border-black rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden group">
+          <div className="bg-slate-800 text-white p-6 border border-gray-100 rounded-2xl rounded-xl shadow-sm relative overflow-hidden group">
              <Users className="absolute -right-4 -bottom-4 w-32 h-32 text-slate-700 opacity-50 group-hover:scale-110 transition-transform" />
              <div className="relative z-10">
-               <h3 className="text-lg font-bold text-slate-300 uppercase">Total Petani</h3>
-               <p className="text-5xl font-black mt-2">{stats.users}</p>
+               <h3 className="text-lg font-bold text-slate-300">Total Petani</h3>
+               <p className="text-5xl font-semibold mt-2">{stats.users}</p>
              </div>
           </div>
 
-          <div className="bg-slate-800 text-white p-6 border-4 border-black rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden group">
+          <div className="bg-slate-800 text-white p-6 border border-gray-100 rounded-2xl rounded-xl shadow-sm relative overflow-hidden group">
              <MessageSquare className="absolute -right-4 -bottom-4 w-32 h-32 text-slate-700 opacity-50 group-hover:scale-110 transition-transform" />
              <div className="relative z-10">
-               <h3 className="text-lg font-bold text-slate-300 uppercase">Total Diskusi</h3>
-               <p className="text-5xl font-black mt-2">{stats.threads}</p>
+               <h3 className="text-lg font-bold text-slate-300">Total Diskusi</h3>
+               <p className="text-5xl font-semibold mt-2">{stats.threads}</p>
              </div>
           </div>
 
-          <div className="bg-slate-800 text-white p-6 border-4 border-black rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden group">
+          <div className="bg-slate-800 text-white p-6 border border-gray-100 rounded-2xl rounded-xl shadow-sm relative overflow-hidden group">
              <Bot className="absolute -right-4 -bottom-4 w-32 h-32 text-slate-700 opacity-50 group-hover:scale-110 transition-transform" />
              <div className="relative z-10">
-               <h3 className="text-lg font-bold text-slate-300 uppercase">Total Balasan AI</h3>
-               <p className="text-5xl font-black mt-2">{stats.aiReplies}</p>
+               <h3 className="text-lg font-bold text-slate-300">Total Balasan AI</h3>
+               <p className="text-5xl font-semibold mt-2">{stats.aiReplies}</p>
              </div>
           </div>
         </div>
       )}
 
       {/* Info Box */}
-      <div className="mt-12 bg-white border-4 border-black p-6 rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-start gap-4">
+      <div className="mt-12 bg-white border border-gray-100 rounded-2xl p-6 rounded-xl shadow-sm flex items-start gap-4">
          <AlertTriangle className="w-8 h-8 text-red-500 shrink-0 mt-1" />
          <div>
-           <h3 className="font-black text-xl text-black">Mode Admin Aktif</h3>
+           <h3 className="font-semibold text-xl text-gray-900">Mode Admin Aktif</h3>
            <p className="font-medium text-slate-700 mt-2">
              Saat ini Anda memiliki akses administrator. Anda dapat menghapus diskusi pada halaman Forum Tani. Gunakan fitur ini dengan bijak.
            </p>

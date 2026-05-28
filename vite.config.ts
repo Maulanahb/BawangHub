@@ -15,7 +15,6 @@ export default defineConfig(({mode}) => {
         devOptions: {
           enabled: true
         },
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
         manifest: {
           name: 'BawangHub',
           short_name: 'BawangHub',

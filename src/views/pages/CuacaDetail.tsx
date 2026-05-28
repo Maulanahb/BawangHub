@@ -101,57 +101,57 @@ export default function CuacaDetail() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
+    <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       <div className="mb-6">
-        <Link to="/" className="inline-flex items-center text-sm font-black uppercase text-black hover:bg-neo-yellow px-2 py-1 border-2 border-transparent hover:border-black transition-colors">
-          <ArrowLeft className="w-5 h-5 mr-1" strokeWidth={3} /> Kembali ke Dashboard
+        <Link to="/" className="inline-flex items-center text-sm font-semibold text-gray-900 hover:bg-gray-50 px-3 py-2 border border-transparent rounded-xl hover:border-gray-200 transition-colors">
+          <ArrowLeft className="w-5 h-5 mr-2" strokeWidth={2.5} /> Kembali ke Dashboard
         </Link>
       </div>
 
-      <div className="border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
-        <div className="bg-neo-blue p-8 text-black relative border-b-4 border-black overflow-hidden">
-            <div className="relative z-10">
-                <div className="flex items-center gap-2 text-black mb-4 font-black text-sm bg-white border-2 border-black w-fit px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase">
-                    <MapPin className="w-4 h-4" strokeWidth={3} /> {locationName}
+      <div className="bg-gradient-to-br from-agri-green-light/40 to-white border border-gray-100 rounded-3xl shadow-sm overflow-hidden mb-8">
+        <div className="p-8 md:p-10 text-gray-900 relative border-b border-gray-100 overflow-hidden">
+            <div className="relative z-10 max-w-2xl">
+                <div className="flex items-center gap-2 text-gray-900 mb-6 font-semibold text-sm bg-white border border-gray-200 rounded-xl w-fit px-4 py-2 shadow-sm">
+                    <MapPin className="w-4 h-4" strokeWidth={2.5} /> {locationName}
                 </div>
                 
                 {weatherInfo ? (
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
                         <div>
-                            <h1 className="text-4xl md:text-5xl font-black mb-2 uppercase tracking-tight" style={{ letterSpacing: "-0.05em" }}>{weatherInfo.condition}</h1>
-                            <div className="text-6xl font-black tracking-tighter text-white drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]" style={{ WebkitTextStroke: "2px black" }}>
-                                {weatherInfo.temp}<span className="text-4xl text-black align-top drop-shadow-none" style={{ WebkitTextStroke: "0" }}>°C</span>
+                            <h1 className="text-3xl md:text-5xl font-bold mb-2 tracking-tight leading-tight">{weatherInfo.condition}</h1>
+                            <div className="text-6xl md:text-7xl font-bold tracking-tighter text-gray-900 drop-shadow-sm">
+                                {weatherInfo.temp}<span className="text-3xl md:text-4xl text-gray-600 align-top ml-1">°C</span>
                             </div>
                         </div>
                         
-                        <div className="flex gap-6 bg-neo-yellow border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                            <div className="flex flex-col gap-1 text-black">
-                                <div className="flex items-center gap-2 font-black uppercase text-xs"><Wind className="w-4 h-4" strokeWidth={3}/> Angin</div>
-                                <div className="font-black text-2xl">{weatherInfo.windSpeed} <span className="text-sm">km/h</span></div>
+                        <div className="flex gap-8 bg-white/60 border border-gray-100 rounded-2xl p-6 shadow-sm backdrop-blur-sm">
+                            <div className="flex flex-col gap-2 text-gray-900">
+                                <div className="flex items-center gap-2 font-semibold text-sm text-gray-600"><Wind className="w-5 h-5"/> Angin</div>
+                                <div className="font-bold text-3xl">{weatherInfo.windSpeed} <span className="text-base text-gray-600">km/h</span></div>
                             </div>
-                            <div className="w-1 bg-black"></div>
-                            <div className="flex flex-col gap-1 text-black">
-                                <div className="flex items-center gap-2 font-black uppercase text-xs"><Droplets className="w-4 h-4" strokeWidth={3}/> Kelembapan</div>
-                                <div className="font-black text-2xl">{weatherInfo.humidity}%</div>
+                            <div className="w-px bg-gray-200 hidden md:block"></div>
+                            <div className="flex flex-col gap-2 text-gray-900">
+                                <div className="flex items-center gap-2 font-semibold text-sm text-gray-600"><Droplets className="w-5 h-5"/> Kelembapan</div>
+                                <div className="font-bold text-3xl">{weatherInfo.humidity}%</div>
                             </div>
                         </div>
                     </div>
                 ) : (
                     <div className="h-32 flex items-center">
-                        <Loader2 className="w-8 h-8 animate-spin text-black" strokeWidth={3} />
+                        <Loader2 className="w-8 h-8 animate-spin text-gray-900" strokeWidth={3} />
                     </div>
                 )}
             </div>
             
-            <Cloud className="absolute -bottom-10 -right-10 w-64 h-64 text-black opacity-10" />
-            <Sun className="absolute top-10 right-20 w-32 h-32 text-neo-yellow border-black opacity-80" />
+            <Cloud className="absolute -bottom-10 -right-10 w-64 h-64 text-gray-900 opacity-10" />
+            <Sun className="absolute top-10 right-20 w-32 h-32 text-amber-500 border-gray-200 opacity-80" />
         </div>
 
-        <div className="p-8 bg-white border-b-4 border-black">
-            <h2 className="text-2xl font-black text-black mb-6 flex items-center gap-2 uppercase tracking-tight border-b-4 border-black inline-block pb-1">
-                <MapIcon className="w-6 h-6 text-black" strokeWidth={2.5}/> Peta Cuaca Langsung
+        <div className="p-8 bg-white border-b border-gray-100">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center gap-2 tracking-tight border-b border-gray-100 inline-block pb-1">
+                <MapIcon className="w-6 h-6 text-gray-900" strokeWidth={2.5}/> Peta Cuaca Langsung
             </h2>
-            <div className="w-full h-[450px] border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-gray-100 overflow-hidden relative">
+            <div className="w-full h-[450px] border border-gray-100 rounded-2xl shadow-sm bg-gray-100 overflow-hidden relative">
                <iframe 
                 width="100%" 
                 height="100%" 
@@ -163,28 +163,28 @@ export default function CuacaDetail() {
             </div>
             <p className="text-sm font-medium text-gray-500 mt-3 flex items-center justify-between">
                 <span>Tekan pada peta untuk melihat detail spesifik per wilayah. Zoom in/out untuk area sekitarnya.</span>
-                <span className="font-bold border-b-2 border-black">Sumber: Windy.com</span>
+                <span className="font-bold border-b-2 border-gray-200">Sumber: Windy.com</span>
             </p>
         </div>
 
         <div className="p-8 bg-white">
-            <h2 className="text-2xl font-black text-black mb-6 flex items-center gap-2 uppercase tracking-tight border-b-4 border-black inline-block pb-1">
-                <Eye className="w-6 h-6 text-black" strokeWidth={2.5}/> Analisis & Rekomendasi AI
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center gap-2 tracking-tight border-b border-gray-100 inline-block pb-1">
+                <Eye className="w-6 h-6 text-gray-900" strokeWidth={2.5}/> Analisis & Rekomendasi AI
             </h2>
             
             {loading ? (
-                <div className="flex flex-col items-center justify-center py-12 text-black gap-4 border-4 border-black border-dashed bg-neo-primary">
-                    <Loader2 className="w-10 h-10 animate-spin text-black" strokeWidth={3} />
-                    <p className="font-black uppercase text-center max-w-sm">AI sedang menganalisis saran terbaik untuk tanaman Anda...</p>
+                <div className="flex flex-col items-center justify-center py-12 text-gray-900 gap-4 border border-dashed border-gray-200 rounded-3xl bg-white">
+                    <Loader2 className="w-10 h-10 animate-spin text-gray-900" strokeWidth={3} />
+                    <p className="font-semibold text-center max-w-sm">AI sedang menganalisis saran terbaik untuk tanaman Anda...</p>
                 </div>
             ) : advice ? (
-                <div className="prose prose-p:font-medium prose-p:text-black prose-headings:font-black prose-headings:uppercase prose-strong:font-black max-w-none text-black leading-relaxed">
+                <div className="prose prose-p:font-medium prose-p:text-gray-900 prose-headings:font-semibold prose-headings:prose-strong:font-semibold max-w-none text-gray-900 leading-relaxed">
                   <div className="markdown-body">
                     <Markdown>{advice}</Markdown>
                   </div>
                 </div>
             ) : (
-                <div className="p-4 bg-neo-pink border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black font-black uppercase">
+                <div className="p-4 bg-purple-50 border border-gray-100 rounded-2xl shadow-sm text-gray-900 font-semibold">
                     Gagal memuat analisis dari AI.
                 </div>
             )}

@@ -12,28 +12,25 @@ RUN npm ci
 # Copy the rest of the application
 COPY . .
 
-# Build the Vite application (outputs to /dist)
+# Build the Vite application and server (outputs to /dist)
 RUN npm run build
 
-# Stage 2: Serve with Nginx
-FROM nginx:alpine
+# Stage 2: Serve with Node.js
+FROM node:20-alpine
 
-# Copy the build output from the builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# Replace default Nginx config to handle React Router (SPA fallback)
-RUN echo 'server { \
-    listen 3000; \
-    server_name localhost; \
-    location / { \
-        root   /usr/share/nginx/html; \
-        index  index.html index.htm; \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+# We only need package.json for runtime scripts if needed, and dependencies
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
-# Expose port (Cloud Run / AI Studio uses 3000, tweak if needed)
+# Copy the build output
+COPY --from=builder /app/dist ./dist
+# If you have a public folder or anything else that needs copying at runtime
+# COPY --from=builder /app/public ./public
+
+# Expose port
 EXPOSE 3000
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start server
+CMD ["node", "dist/server.cjs"]

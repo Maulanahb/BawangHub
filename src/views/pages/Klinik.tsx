@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UploadCloud, Loader2, AlertCircle } from "lucide-react";
+import { UploadCloud, Loader2, AlertCircle, Stethoscope } from "lucide-react";
 import { analyzeShallotHealth, type AnalysisResult } from "../../models/services/gemini";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -76,18 +76,23 @@ export default function Klinik() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
-      <div>
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight text-black uppercase" style={{ letterSpacing: "-0.05em" }}>Klinik Bawang</h1>
-        <p className="text-black text-lg mt-2">
-          Cek penyakit daun bawang merah Anda lewat foto.
-        </p>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12 max-w-7xl mx-auto">
+      <div className="bg-gradient-to-br from-agri-green-light/40 to-white border border-gray-100 rounded-3xl p-8 md:p-10 relative shadow-sm overflow-hidden mb-8 flex items-center justify-between">
+        <div className="relative z-10 max-w-2xl">
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-gray-900 leading-tight">Klinik Bawang</h1>
+          <p className="text-gray-600 mt-4 text-lg">
+            Diagnosa kesehatan dan cek penyakit daun bawang merah Anda dengan cepat hanya menggunakan foto.
+          </p>
+        </div>
+        <div className="hidden md:block absolute right-0 bottom-0 opacity-[0.03] pointer-events-none transform translate-x-1/4 translate-y-1/4">
+          <Stethoscope className="w-64 h-64 text-gray-900" />
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
         {/* Upload Column */}
         <div className="space-y-4">
-          <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-neo-yellow hover:bg-neo-green hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 transition-all text-center cursor-pointer relative p-12 lg:p-20 group">
+          <div className="border border-dashed border-gray-300 rounded-3xl bg-gray-50 hover:bg-agri-green-light/50 transition-colors text-center cursor-pointer relative p-8 md:p-12 group flex flex-col items-center justify-center min-h-[300px]">
             <input
               type="file"
               accept="image/*"
@@ -95,30 +100,30 @@ export default function Klinik() {
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             />
             {preview ? (
-              <div className="border-4 border-black inline-block shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white relative z-20">
-                <img src={preview} alt="Preview" className="mx-auto max-h-64 object-cover" />
+              <div className="bg-white rounded-2xl p-2 shadow-sm relative z-20 w-full max-w-sm mx-auto">
+                <img src={preview} alt="Preview" className="mx-auto rounded-xl w-full max-h-64 object-cover" />
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center text-black space-y-6">
-                <div className="w-24 h-24 border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center group-hover:-translate-y-2 transition-transform">
-                    <UploadCloud className="w-12 h-12 text-black" strokeWidth={3} />
+              <div className="flex flex-col items-center justify-center text-gray-600 space-y-4">
+                <div className="w-20 h-20 bg-white rounded-full shadow-sm flex items-center justify-center group-hover:-translate-y-1 transition-transform">
+                    <UploadCloud className="w-10 h-10 text-agri-green" strokeWidth={2} />
                 </div>
                 <div className="space-y-1">
-                   <p className="text-2xl font-black uppercase tracking-tight">Tap / Klik Di Sini</p>
-                   <p className="font-bold text-sm">Ambil Foto Daun</p>
+                   <p className="text-xl font-semibold text-gray-900">Tap / Klik Di Sini</p>
+                   <p className="font-medium text-sm text-gray-500">Ambil Foto Daun</p>
                 </div>
               </div>
             )}
           </div>
           
           <button 
-            className="w-full bg-neo-accent border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none text-black font-black uppercase tracking-tight py-4 text-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center" 
+            className="w-full bg-agri-green text-white rounded-xl hover:bg-agri-green-dark shadow-sm text-sm font-semibold py-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center" 
             disabled={!file || loading}
             onClick={handleAnalyze}
           >
             {loading ? (
               <>
-                <Loader2 className="w-8 h-8 mr-3 animate-spin" strokeWidth={3} /> Memeriksa...
+                <Loader2 className="w-5 h-5 mr-3 animate-spin" /> Memeriksa...
               </>
             ) : (
               "Diagnosis Sekarang"
@@ -126,16 +131,16 @@ export default function Klinik() {
           </button>
 
           {!user && (
-            <div className="border-2 border-black bg-white p-3 flex items-start gap-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 text-black mt-0.5" strokeWidth={2.5}/>
-              <p className="text-sm text-black font-bold">Riwayat diagnosis bisa tersimpan jika Anda <a href="/login" className="text-black bg-neo-accent px-1 border-b-2 border-black hover:bg-neo-yellow transition-colors font-black">Masuk</a>.</p>
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3 mt-4">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 text-blue-500 mt-0.5" />
+              <p className="text-sm text-blue-800 font-medium">Riwayat diagnosis bisa tersimpan jika Anda <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold underline">Masuk/Daftar</a>.</p>
             </div>
           )}
 
           {error && (
-            <div className="border-4 border-black bg-neo-pink p-4 flex items-start gap-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <AlertCircle className="w-6 h-6 flex-shrink-0 text-black mt-0.5" strokeWidth={3} />
-              <p className="text-black font-bold uppercase">{error}</p>
+            <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-start gap-3 mt-4">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-500 mt-0.5" />
+              <p className="text-sm text-red-800 font-semibold">{error}</p>
             </div>
           )}
         </div>
@@ -143,33 +148,33 @@ export default function Klinik() {
         {/* Result Column */}
         <div>
           {result ? (
-            <div className="border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full">
-              <div className={`p-6 border-b-4 border-black ${result.isHealthy ? 'bg-neo-accent' : 'bg-neo-pink'}`}>
+            <div className="bg-white border border-gray-100 rounded-3xl shadow-sm flex flex-col h-full overflow-hidden relative">
+              <div className={`p-6 border-b border-gray-100 ${result.isHealthy ? 'bg-agri-green-light' : 'bg-red-50'}`}>
                 <div className="flex flex-col gap-2 relative">
-                  <h3 className={`text-2xl font-black text-black uppercase tracking-tight bg-white border-2 border-black p-2 inline-block w-max shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] -rotate-1`}>
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
                     {result.diseaseName}
                   </h3>
-                  <span className="text-sm font-bold px-2 py-1 bg-white border-2 border-black w-max absolute right-0 top-0 rotate-2">
+                  <span className={`text-xs font-semibold px-3 py-1 rounded-full w-max mt-2 border ${result.isHealthy ? 'bg-agri-green text-white border-agri-green' : 'bg-white text-red-600 border-red-200'}`}>
                     Akurasi: {result.confidence}
                   </span>
                 </div>
               </div>
-              <div className="p-6 space-y-6 flex-1">
+              <div className="p-6 md:p-8 space-y-8 flex-1">
                 <div>
-                  <h4 className="text-lg font-black text-black mb-2 uppercase border-b-2 border-black pb-1 inline-block">Detail Gejala</h4>
-                  <p className="text-black font-medium leading-relaxed mt-2 border-l-4 border-neo-yellow pl-3">{result.details}</p>
+                  <h4 className="text-base font-semibold text-gray-900 mb-2">Detail Gejala</h4>
+                  <p className="text-gray-600 font-medium leading-relaxed mt-2 p-4 bg-gray-50 rounded-xl">{result.details}</p>
                 </div>
                 
                 {result.recommendations && result.recommendations.length > 0 && (
                   <div>
-                    <h4 className="text-lg font-black text-black mb-4 uppercase border-b-2 border-black pb-1 inline-block">Rekomendasi Penanganan</h4>
-                    <ul className="space-y-3">
+                    <h4 className="text-base font-semibold text-gray-900 mb-4">Rekomendasi Penanganan</h4>
+                    <ul className="space-y-4">
                       {result.recommendations.map((rec, i) => (
-                        <li key={i} className="flex gap-4 items-start text-black font-medium">
-                          <span className="flex-shrink-0 w-8 h-8 border-2 border-black bg-neo-blue shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center font-black">
+                        <li key={i} className="flex gap-4 items-start text-gray-700 font-medium bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                          <span className="flex-shrink-0 w-8 h-8 rounded-full bg-agri-green-light text-agri-green-dark flex items-center justify-center font-bold text-sm">
                             {i + 1}
                           </span>
-                          <span className="pt-1">{rec}</span>
+                          <span className="pt-1 text-sm leading-relaxed">{rec}</span>
                         </li>
                       ))}
                     </ul>
@@ -178,7 +183,7 @@ export default function Klinik() {
               </div>
             </div>
           ) : (
-             <div className="h-full border-4 border-black border-dashed min-h-[300px] flex items-center justify-center text-black bg-neo-primary p-8 text-center text-lg font-bold shadow-[inset_4px_4px_0px_rgba(0,0,0,0.1)]">
+             <div className="h-full border border-dashed border-gray-200 rounded-3xl min-h-[300px] flex items-center justify-center text-gray-400 bg-gray-50 p-8 text-center font-medium">
                 Hasil diagnosis AI akan muncul di sini setelah Anda mengupload foto.
              </div>
           )}

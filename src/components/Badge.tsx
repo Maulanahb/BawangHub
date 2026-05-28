@@ -5,14 +5,14 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 export function Badge({ className, variant = "default", ...props }: BadgeProps) {
-  let variantClasses = "bg-white text-black";
-  if (variant === "expert") variantClasses = "bg-neo-yellow text-black";
-  else if (variant === "ai") variantClasses = "bg-neo-accent text-black";
-  else if (variant === "outline") variantClasses = "bg-transparent text-black shadow-none";
+  let variantClasses = "bg-white text-gray-900";
+  if (variant === "expert") variantClasses = "bg-amber-50 text-gray-900";
+  else if (variant === "ai") variantClasses = "bg-agri-green-light text-gray-900";
+  else if (variant === "outline") variantClasses = "bg-transparent text-gray-900 shadow-none";
 
   return (
     <span
-      className={`inline-flex items-center border-2 border-black font-black uppercase text-[10px] px-2 py-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] tracking-wider whitespace-nowrap ${variantClasses} ${className || ""}`}
+      className={`inline-flex items-center border border-gray-200 rounded-xl font-semibold text-[10px] px-2 py-0.5 shadow-sm tracking-wider whitespace-nowrap ${variantClasses} ${className || ""}`}
       {...props}
     />
   );

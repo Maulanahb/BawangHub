@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../components/AuthProvider';
 import { Navigate } from 'react-router-dom';
-import { BawangLogo } from '../components/BawangLogo';
 
 export default function Login() {
   const { user, signIn, loading } = useAuth();
@@ -34,18 +33,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neo-primary px-4 border-[12px] border-black">
-      <div className="max-w-md w-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 text-center animate-in fade-in zoom-in-95 duration-500">
-        <div className="w-20 h-20 bg-neo-pink border-4 border-black flex items-center justify-center mx-auto mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -rotate-3 hover:rotate-0 transition-transform">
-          <BawangLogo className="w-10 h-10 text-black" />
-        </div>
-        <h1 className="text-3xl lg:text-4xl font-black text-black mb-2 tracking-tight uppercase" style={{ letterSpacing: "-0.05em" }}>Masuk ke BawangHub</h1>
-        <p className="text-black font-medium mb-8 border-b-4 border-black pb-6">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4 ">
+      <div className="max-w-md w-full bg-white border border-gray-100 rounded-2xl shadow-sm p-8 text-center animate-in fade-in zoom-in-95 duration-500">
+        <h1 className="text-3xl lg:text-4xl font-semibold text-gray-900 mb-2 tracking-tight">Masuk ke BawangHub</h1>
+        <p className="text-gray-900 font-medium mb-8 border-b border-gray-100 pb-6">
           Masuk untuk menyimpan riwayat panen dan analisis klinik bawang Anda.
         </p>
         
         {authError && (
-          <div className="bg-neo-pink text-black border-4 border-black font-bold p-3 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm">
+          <div className="bg-purple-50 text-gray-900 border border-gray-100 rounded-2xl font-bold p-3 mb-6 shadow-sm text-sm">
             {authError}
           </div>
         )}
@@ -53,13 +49,13 @@ export default function Login() {
         <button
           onClick={handleSignIn}
           disabled={isSigningIn}
-          className="w-full bg-white border-4 border-black text-black font-black py-4 px-4 flex items-center justify-center gap-3 transition-all mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-neo-yellow hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none uppercase tracking-wide text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-white border border-gray-100 rounded-2xl text-gray-900 font-semibold py-4 px-4 flex items-center justify-center gap-3 transition-all mb-6 shadow-sm hover:bg-amber-50 hover:-translate-y-1 hover:shadow-sm active:scale-95 active:shadow-sm tracking-wide text-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSigningIn ? (
             <span className="flex items-center gap-2">Memproses...</span>
           ) : (
             <>
-              <svg className="w-6 h-6 border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] p-1 bg-white" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 border border-gray-200 rounded-xl rounded-full shadow-sm p-1 bg-white" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                   fill="#4285F4"
@@ -81,7 +77,7 @@ export default function Login() {
             </>
           )}
         </button>
-        <a href="/" className="inline-block text-sm font-black text-black uppercase bg-neo-green border-2 border-black px-4 py-2 hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all active:translate-y-[2px] active:shadow-none">
+        <a href="/" className="inline-block text-sm font-semibold text-gray-900 bg-agri-green border border-gray-200 rounded-xl px-4 py-2 hover:bg-white hover:shadow-sm hover:-translate-y-1 transition-all active:translate-y-[2px] active:shadow-none">
           Lanjutkan tanpa masuk &rarr;
         </a>
       </div>
