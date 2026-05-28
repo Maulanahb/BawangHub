@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, LeafyGreen, Calculator, CalendarDays, BookOpen, Sun, Cloud, CloudRain, CloudLightning, ThermometerSun, Loader2, MapPin } from "lucide-react";
+import { ArrowRight, LeafyGreen, Calculator, CalendarDays, BookOpen, Sun, Cloud, CloudRain, CloudLightning, ThermometerSun, Loader2, MapPin, BarChart3, MessageSquare, Bot, Image as ImageIcon } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { getWeatherAdvice, type WeatherAdvice } from "../../models/services/gemini";
 import { motion } from "motion/react";
@@ -28,9 +28,20 @@ export default function Dashboard() {
       try {
         let infoText = "";
         try {
-          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-          const data = await res.json();
+          let data;
+          try {
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            data = await res.json();
+          } catch (e) {
+            console.warn("Direct fetch failed, trying proxy...", e);
+            const proxyUrl = "https://api.allorigins.win/raw?url=";
+            const targetUrl = encodeURIComponent(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+            const res = await fetch(proxyUrl + targetUrl);
+            if (!res.ok) throw new Error(`HTTP error from proxy! status: ${res.status}`);
+            data = await res.json();
+          }
+          
           const temp = data.current_weather.temperature;
           const code = data.current_weather.weathercode;
           
@@ -94,157 +105,239 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row justify-between gap-6 relative">
-        <div className="flex-1 relative z-10">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-black uppercase" style={{ letterSpacing: "-0.05em" }}>Dashboard BawangHub</h1>
-          <p className="text-black font-medium mt-2 text-lg max-w-xl border-l-4 border-black pl-4">
-            Platform AI untuk mendukung petani bawang merah Indonesia.
-          </p>
-          
-          {/* Dashboard Vector Illustration Placeholder */}
-          <div className="mt-8 hidden md:block">
-            <div className="inline-flex items-end gap-2 border-b-4 border-black px-4 pb-0 relative">
-               <div className="absolute w-full h-1/2 bg-neo-accent bottom-0 left-0 -z-10"></div>
-               <div className="relative transform hover:-translate-y-2 transition-transform duration-300">
-                 <div className="w-24 h-24 bg-white border-4 border-black border-b-0 rounded-t-2xl flex items-center justify-center shadow-[4px_0_0_0_rgba(0,0,0,1)] relative z-20 overflow-hidden">
-                    <JavaneseFarmerSVG className="w-20 h-20 mt-4" />
-                 </div>
-               </div>
-               <div className="relative transform hover:-translate-y-1 transition-transform duration-300 delay-75">
-                 <div className="w-16 h-20 bg-neo-yellow border-4 border-black border-b-0 rounded-t-2xl flex items-center justify-center shadow-[4px_0_0_0_rgba(0,0,0,1)] relative z-10 overflow-hidden">
-                    <BawangMerahSVG className="w-12 h-12 mt-2" />
-                 </div>
-               </div>
-               <div className="ml-4 pb-2 flex flex-col items-start gap-2">
-                 <span className="font-black text-black">Petani & Bawang Merah!</span>
-                 <Link to="/tanya-ai" className="inline-flex items-center text-xs font-bold text-white border-2 border-black bg-black px-3 py-1 hover:bg-gray-800 shadow-[2px_2px_0px_0px_rgba(255,234,167,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all">
-                   Tanya Agri AI <ArrowRight className="ml-1 w-3 h-3" />
-                 </Link>
-               </div>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto pb-12">
+      {/* Hero Section */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Intro Box */}
+        <div className="lg:col-span-2 bg-gradient-to-br from-agri-green-light/40 to-white border border-gray-100 rounded-3xl p-8 md:p-10 flex flex-col justify-center relative shadow-sm overflow-hidden">
+          <div className="relative z-10">
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight leading-tight">
+              Halo, <span className="text-agri-green">Petani Bawang!</span>
+            </h1>
+            <p className="mt-4 text-gray-600 text-lg max-w-xl">
+              Selamat datang di Dashboard BawangHub. Platform AI terpadu untuk mendukung aktivitas harian, pantau cuaca, periksa penyakit, dan kalkulasi panen dengan mudah.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-4 mt-auto">
+              <Link to="/tanya-ai" className="bg-agri-green text-white font-semibold px-6 py-3 rounded-xl hover:bg-agri-green-dark transition-all inline-flex items-center shadow-sm">
+                Mulai Tanya AI <ArrowRight className="ml-2 w-5 h-5" />
+              </Link>
+              <Link to="/jadwal" className="bg-white text-gray-700 border border-gray-200 font-semibold px-6 py-3 rounded-xl hover:bg-gray-50 transition-all inline-flex items-center shadow-sm">
+                Cek Jadwal
+              </Link>
             </div>
+          </div>
+          {/* Decorative Vector */}
+          <div className="absolute right-0 bottom-0 opacity-[0.03] pointer-events-none transform translate-x-1/4 translate-y-1/4">
+             <LeafyGreen className="w-72 h-72 text-gray-900" />
           </div>
         </div>
 
-        {/* Widget Cuaca & Saran AI */}
-        <div className="w-full md:w-[400px] shrink-0">
-          <div className="relative overflow-hidden h-full bg-neo-blue border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 flex flex-col justify-center min-h-[120px]">
-            {loading ? (
-              <div className="flex items-center text-sm font-bold text-black border-2 border-black bg-white px-4 py-2 w-max">
-                <Loader2 className="w-5 h-5 mr-3 animate-spin" /> Menganalisis...
+        {/* Weather Widget */}
+        <div className="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 flex flex-col shadow-sm relative">
+          {loading ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+              <Loader2 className="w-8 h-8 animate-spin text-agri-green mb-3" />
+              <p className="text-sm font-medium">Memuat Cuaca...</p>
+            </div>
+          ) : advice ? (
+            <div className="flex flex-col h-full z-10 relative">
+              <div className="flex items-center justify-between mb-6">
+                 <h3 className="font-semibold text-gray-900">Info Cuaca</h3>
+                 <span className="flex items-center text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl">
+                    <MapPin className="w-3.5 h-3.5 mr-1.5 text-agri-green" /> {locationName}
+                 </span>
               </div>
-            ) : advice ? (
-              <div className="flex gap-4 items-start">
-                <div className="w-12 h-12 border-2 border-black bg-neo-yellow shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black flex items-center justify-center shrink-0 z-10">
-                  <WeatherIcon iconName={advice.icon} className="w-6 h-6" />
+              
+              <div className="flex items-center gap-5 mb-8">
+                <div className="w-16 h-16 bg-agri-green-light text-agri-green-dark rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
+                  <WeatherIcon iconName={advice.icon} className="w-8 h-8" />
                 </div>
+                <div>
+                   <div className="text-3xl font-bold tracking-tight text-gray-900">{weatherInfo.split(', ')[1] || '-'}</div>
+                   <div className="text-sm font-medium text-gray-500 mt-0.5">{weatherInfo.split(', ')[0] || '-'}</div>
+                </div>
+              </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="font-bold text-black flex items-center gap-1 text-xs border-2 border-black bg-white px-2 py-0.5">
-                      <MapPin className="w-3.5 h-3.5" /> {locationName}
-                    </span>
-                    <span className="font-bold text-black text-xs border-2 border-black bg-neo-accent px-2 py-0.5">
-                      {weatherInfo}
-                    </span>
-                  </div>
-                  
-                  <h3 className="font-black text-sm text-black mb-1 uppercase leading-tight">{advice.title}</h3>
-                  <p className="text-xs text-black leading-snug line-clamp-2 font-medium mb-2">
-                    {advice.advice}
-                  </p>
-                  
-                  <Link to="/cuaca" className="text-[11px] font-bold text-black hover:bg-white border-b-2 border-black hover:border-black flex items-center transition-colors w-max">
-                    Lihat saran detail <ArrowRight className="w-3 h-3 ml-1" />
-                  </Link>
-                </div>
+              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 mt-auto">
+                 <h4 className="text-sm font-bold text-gray-900 mb-1.5">{advice.title}</h4>
+                 <p className="text-sm text-gray-600 leading-relaxed font-medium line-clamp-3">
+                   {advice.advice}
+                 </p>
+                 <Link to="/cuaca" className="inline-flex mt-4 text-xs font-bold text-agri-green hover:text-agri-green-dark items-center uppercase tracking-wide">
+                    Selengkapnya <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                 </Link>
               </div>
-            ) : (
-                <div className="text-sm text-black font-bold border-2 border-black bg-white px-4 py-2 w-max text-center">
-                  Tidak dapat memuat cuaca.
-                </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-sm text-gray-400 font-medium">
+              <CloudRain className="w-10 h-10 mb-3 text-gray-300" />
+              Data tidak tersedia.
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
-        <Card className="group flex flex-col bg-neo-green border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
-          <CardHeader>
-            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <div className="pt-4 flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Eksplorasi Fitur</h2>
+      </div>
+
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+        <Card className="group flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full rounded-2xl overflow-hidden">
+          <CardHeader className="p-6">
+            <div className="w-16 h-16 bg-agri-green-light text-agri-green rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105">
               <LeafyGreen className="w-8 h-8" />
             </div>
-            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Klinik Bawang</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
-              Analisis penyakit daun bawang merah Anda lewat foto. Cukup upload foto, biarkan AI yang mendiagnosis penyakitnya.
+            <CardTitle className="text-xl font-bold text-gray-900">Klinik</CardTitle>
+            <CardDescription className="text-gray-500 font-medium mt-1">
+              Scan daun sakit dengan kamera.
             </CardDescription>
           </CardHeader>
-          <CardContent className="mt-auto">
+          <CardContent className="mt-auto px-6 pb-6 pt-0">
             <Link
               to="/klinik"
-              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+              className="w-full flex justify-center items-center text-sm font-semibold text-agri-green bg-agri-green-light hover:bg-agri-green hover:text-white rounded-xl px-4 py-3 transition-colors"
             >
-              Coba Sekarang <ArrowRight className="ml-2 w-4 h-4" />
+              Scan Foto <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="group flex flex-col bg-neo-blue border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
-          <CardHeader>
-            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <Card className="group flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full rounded-2xl overflow-hidden">
+          <CardHeader className="p-6">
+            <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105">
               <Calculator className="w-8 h-8" />
             </div>
-            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Kalkulator Panen</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
-              Hitung estimasi panen, prediksi harga jual, dan terima panduan strategi pasar cerdas berdasarkan luas lahan dan cuaca.
+            <CardTitle className="text-xl font-bold text-gray-900">Kalkulator</CardTitle>
+            <CardDescription className="text-gray-500 font-medium mt-1">
+              Hitung panen & harga.
             </CardDescription>
           </CardHeader>
-          <CardContent className="mt-auto">
+          <CardContent className="mt-auto px-6 pb-6 pt-0">
             <Link
               to="/kalkulator"
-              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+              className="w-full flex justify-center items-center text-sm font-semibold text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-xl px-4 py-3 transition-colors"
             >
               Mulai Hitung <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="group flex flex-col bg-neo-yellow border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
-          <CardHeader>
-            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <Card className="group flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full rounded-2xl overflow-hidden">
+          <CardHeader className="p-6">
+            <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105">
               <CalendarDays className="w-8 h-8" />
             </div>
-            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Jadwal Tanam</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
-              Masukan tanggal tanam dan AI akan merumuskan timeline harian kapan harus memupuk, menyemprot, dan panen.
+            <CardTitle className="text-xl font-bold text-gray-900">Jadwal</CardTitle>
+            <CardDescription className="text-gray-500 font-medium mt-1">
+              Kapan pupuk & semprot?
             </CardDescription>
           </CardHeader>
-          <CardContent className="mt-auto">
+          <CardContent className="mt-auto px-6 pb-6 pt-0">
             <Link
               to="/jadwal"
-              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+              className="w-full flex justify-center items-center text-sm font-semibold text-amber-600 bg-amber-50 hover:bg-amber-500 hover:text-white rounded-xl px-4 py-3 transition-colors"
             >
               Buat Jadwal <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="group flex flex-col bg-neo-pink border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 h-full rounded-none">
-          <CardHeader>
-            <div className="w-14 h-14 bg-white border-4 border-black rounded-none flex items-center justify-center mb-4 text-black transition-transform duration-300 group-hover:scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <Card className="group flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full rounded-2xl overflow-hidden">
+          <CardHeader className="p-6">
+            <div className="w-16 h-16 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105">
               <BookOpen className="w-8 h-8" />
             </div>
-            <CardTitle className="text-xl font-black uppercase text-black tracking-tight">Buku Tani Cerdas</CardTitle>
-            <CardDescription className="line-clamp-3 text-black font-medium mt-2">
-              Catat pengeluaran dan pemasukan dengan bahasa layaknya SMS, biarkan AI mengekstrak nilainya ke tabel database.
+            <CardTitle className="text-xl font-bold text-gray-900">Buku Tani</CardTitle>
+            <CardDescription className="text-gray-500 font-medium mt-1">
+              Catat jual beli harian.
             </CardDescription>
           </CardHeader>
-          <CardContent className="mt-auto">
+          <CardContent className="mt-auto px-6 pb-6 pt-0">
             <Link
               to="/bukutani"
-              className="inline-flex items-center text-sm font-black uppercase text-black border-4 border-black bg-white px-4 py-2 hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all"
+              className="w-full flex justify-center items-center text-sm font-semibold text-purple-600 bg-purple-50 hover:bg-purple-600 hover:text-white rounded-xl px-4 py-3 transition-colors"
             >
               Buka Buku <ArrowRight className="ml-2 w-4 h-4" />
+            </Link>
+          </CardContent>
+        </Card>
+        
+        <Card className="group flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full rounded-2xl overflow-hidden">
+          <CardHeader className="p-6">
+            <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105">
+              <ImageIcon className="w-8 h-8" />
+            </div>
+            <CardTitle className="text-xl font-bold text-gray-900">Galeri</CardTitle>
+            <CardDescription className="text-gray-500 font-medium mt-1">
+              Dokumentasi & referensi bawang.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="mt-auto px-6 pb-6 pt-0">
+            <Link
+              to="/galeri"
+              className="w-full flex justify-center items-center text-sm font-semibold text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white rounded-xl px-4 py-3 transition-colors"
+            >
+              Lihat Galeri <ArrowRight className="ml-2 w-4 h-4" />
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="group flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full rounded-2xl overflow-hidden">
+          <CardHeader className="p-6">
+            <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105">
+              <BarChart3 className="w-8 h-8" />
+            </div>
+            <CardTitle className="text-xl font-bold text-gray-900">Statistik</CardTitle>
+            <CardDescription className="text-gray-500 font-medium mt-1">
+              Pantau tren & harga pasar.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="mt-auto px-6 pb-6 pt-0">
+            <Link
+              to="/statistik"
+              className="w-full flex justify-center items-center text-sm font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-600 hover:text-white rounded-xl px-4 py-3 transition-colors"
+            >
+              Cek Statistik <ArrowRight className="ml-2 w-4 h-4" />
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="group flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full rounded-2xl overflow-hidden">
+          <CardHeader className="p-6">
+            <div className="w-16 h-16 bg-sky-50 text-sky-500 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105">
+              <MessageSquare className="w-8 h-8" />
+            </div>
+            <CardTitle className="text-xl font-bold text-gray-900">Forum</CardTitle>
+            <CardDescription className="text-gray-500 font-medium mt-1">
+              Diskusi sesama petani.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="mt-auto px-6 pb-6 pt-0">
+            <Link
+              to="/forum"
+              className="w-full flex justify-center items-center text-sm font-semibold text-sky-600 bg-sky-50 hover:bg-sky-600 hover:text-white rounded-xl px-4 py-3 transition-colors"
+            >
+              Gabung Forum <ArrowRight className="ml-2 w-4 h-4" />
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="group flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 h-full rounded-2xl overflow-hidden">
+          <CardHeader className="p-6">
+            <div className="w-16 h-16 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105">
+              <Bot className="w-8 h-8" />
+            </div>
+            <CardTitle className="text-xl font-bold text-gray-900">Tanya AI</CardTitle>
+            <CardDescription className="text-gray-500 font-medium mt-1">
+              Konsultasi dengan asisten AI.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="mt-auto px-6 pb-6 pt-0">
+            <Link
+              to="/tanya-ai"
+              className="w-full flex justify-center items-center text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white rounded-xl px-4 py-3 transition-colors"
+            >
+              Chat Agri AI <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </CardContent>
         </Card>

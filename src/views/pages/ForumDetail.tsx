@@ -7,6 +7,19 @@ import { Thread, Reply } from "../../types/forum";
 import { getAgriAIReply } from "../../models/services/gemini";
 import { ArrowLeft, Send, Loader2, Bot, User as UserIcon, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { Badge } from "../../components/Badge";
+
+// Helper for gamification points
+const getUserPoints = (userId: string) => {
+  if (userId === "bawang-bot") return 0;
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return Math.abs(hash % 900) + 100; // 100 to 1000 points
+};
+
+const isExpert = (points: number) => points >= 500;
 
 export default function ForumDetail() {
   const { id } = useParams<{ id: string }>();
@@ -158,7 +171,7 @@ export default function ForumDetail() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <Link to="/forum" className="inline-flex items-center text-sm font-bold text-black border-b-2 border-transparent hover:border-black transition-colors w-max">
+        <Link to="/forum" className="inline-flex items-center text-sm font-bold text-gray-900 border-b-2 border-transparent hover:border-gray-200 transition-colors w-max">
           <ArrowLeft className="w-4 h-4 mr-1" strokeWidth={2.5} /> Kembali ke Daftar Diskusi
         </Link>
         
@@ -166,7 +179,7 @@ export default function ForumDetail() {
           <button 
             onClick={handleDeleteThread}
             disabled={isSubmitting}
-            className="flex items-center gap-1 font-bold text-white bg-red-600 border-2 border-black px-4 py-2 hover:bg-red-700 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50 text-sm"
+            className="flex items-center gap-1 font-bold text-white bg-red-600 border border-gray-200 rounded-xl px-4 py-2 hover:bg-red-700 shadow-sm active:scale-95 active:shadow-sm transition-all disabled:opacity-50 text-sm"
           >
             <Trash2 className="w-4 h-4" />
             Hapus Diskusi
@@ -175,22 +188,34 @@ export default function ForumDetail() {
       </div>
 
       {/* Main Thread Post */}
-      <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
         <div className="p-6 sm:p-8">
-          <h1 className="text-3xl sm:text-4xl font-black text-black tracking-tight uppercase leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900 tracking-tight leading-tight">
             {thread.judul}
           </h1>
-          <div className="flex items-center gap-3 mt-4 text-sm text-black border-b-4 border-black pb-6 font-bold">
-            <div className="w-8 h-8 bg-neo-yellow border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center text-black">
+          <div className="flex flex-wrap items-center gap-3 mt-4 text-sm text-gray-900 border-b border-gray-100 pb-6 font-bold">
+            <div className="w-8 h-8 bg-amber-50 border border-gray-200 rounded-xl shadow-sm flex items-center justify-center text-gray-900">
               {thread.userName.charAt(0).toUpperCase()}
             </div>
-            <div>
-              <span className="font-bold text-black">{thread.userName}</span>
-              <span className="mx-2">•</span>
-              <span className="bg-neo-accent border-2 border-black px-2 py-0.5">{thread.createdAt?.toDate ? thread.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-bold text-gray-900">{thread.userName}</span>
+              
+              {isExpert(getUserPoints(thread.userId)) && (
+                <Badge variant="expert" title={`${getUserPoints(thread.userId)} Poin Jawaban`}>
+                  ★ PETANI PAKAR
+                </Badge>
+              )}
+              {!isExpert(getUserPoints(thread.userId)) && (
+                <Badge variant="outline" title={`${getUserPoints(thread.userId)} Poin Jawaban`}>
+                  {getUserPoints(thread.userId)} Pts
+                </Badge>
+              )}
+
+              <span className="mx-2 hidden sm:inline">•</span>
+              <span className="bg-agri-green-light border border-gray-200 rounded-xl px-2 py-0.5 whitespace-nowrap">{thread.createdAt?.toDate ? thread.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</span>
             </div>
           </div>
-          <div className="mt-6 text-black font-medium leading-relaxed whitespace-pre-wrap">
+          <div className="mt-6 text-gray-900 font-medium leading-relaxed whitespace-pre-wrap">
             {thread.isi_pesan}
           </div>
         </div>
@@ -201,28 +226,40 @@ export default function ForumDetail() {
         {replies.map((reply) => (
           <div 
             key={reply.id} 
-            className={`p-6 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${reply.is_ai_generated ? 'bg-neo-blue ml-4 sm:ml-8' : 'bg-white'}`}
+            className={`p-6 border border-gray-200 rounded-xl shadow-sm ${reply.is_ai_generated ? 'bg-blue-50 ml-4 sm:ml-8' : 'bg-white'}`}
           >
             <div className="flex items-start gap-3">
-              <div className={`w-8 h-8 border-2 border-black flex items-center justify-center flex-shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${reply.is_ai_generated ? 'bg-neo-pink text-black' : 'bg-neo-yellow text-black'}`}>
+              <div className={`w-8 h-8 border border-gray-200 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm ${reply.is_ai_generated ? 'bg-purple-50 text-gray-900' : 'bg-amber-50 text-gray-900'}`}>
                 {reply.is_ai_generated ? <Bot className="w-4 h-4" strokeWidth={2.5}/> : <UserIcon className="w-4 h-4" strokeWidth={2.5}/>}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-3">
-                  <span className={`font-black text-sm uppercase ${reply.is_ai_generated ? 'text-black' : 'text-black'}`}>
+                  <span className={`font-semibold text-sm ${reply.is_ai_generated ? 'text-gray-900' : 'text-gray-900'}`}>
                     {reply.userName}
                   </span>
-                  <span className="text-xs text-black font-bold border-2 border-black bg-white px-2 py-0.5">
+                  
+                  {!reply.is_ai_generated && isExpert(getUserPoints(reply.userId)) && (
+                    <Badge variant="expert" title={`${getUserPoints(reply.userId)} Poin Jawaban`}>
+                      ★ PETANI PAKAR
+                    </Badge>
+                  )}
+                  {!reply.is_ai_generated && !isExpert(getUserPoints(reply.userId)) && (
+                    <Badge variant="outline" title={`${getUserPoints(reply.userId)} Poin Jawaban`}>
+                      {getUserPoints(reply.userId)} Pts
+                    </Badge>
+                  )}
+
+                  <span className="text-xs text-gray-900 font-bold border border-gray-200 rounded-xl bg-white px-2 py-0.5">
                     {reply.createdAt?.toDate ? reply.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}
                   </span>
                   {reply.is_ai_generated && (
-                    <span className="bg-neo-accent text-black text-[10px] px-2 py-0.5 border-2 border-black font-black uppercase tracking-wider">
+                    <Badge variant="ai">
                       AI ASSIST
-                    </span>
+                    </Badge>
                   )}
                 </div>
                 {/* if it's AI, use markdown */}
-                <div className={`text-sm sm:text-base leading-relaxed font-medium ${reply.is_ai_generated ? 'text-black markdown-body prose prose-slate prose-sm' : 'text-black whitespace-pre-wrap'}`}>
+                <div className={`text-sm sm:text-base leading-relaxed font-medium ${reply.is_ai_generated ? 'text-gray-900 markdown-body prose prose-slate prose-sm' : 'text-gray-900 whitespace-pre-wrap'}`}>
                   {reply.is_ai_generated ? (
                     <ReactMarkdown>{reply.isi_balasan}</ReactMarkdown>
                   ) : (
@@ -236,25 +273,25 @@ export default function ForumDetail() {
       </div>
 
       {/* Reply Form */}
-      <div className="bg-neo-primary p-6 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mt-8">
-        <h3 className="text-xl font-black text-black uppercase tracking-tight mb-4">Tambahkan Balasan</h3>
+      <div className="bg-white p-6 border border-gray-100 rounded-2xl shadow-sm mt-8">
+        <h3 className="text-xl font-semibold text-gray-900 tracking-tight mb-4">Tambahkan Balasan</h3>
         <form onSubmit={handleReply}>
           <textarea
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="Tulis balasan... (Ketik @AgriAI untuk bertanya pada AI)"
-            className="w-full h-32 px-4 py-3 border-2 border-black focus:outline-none focus:ring-0 focus:border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white resize-none text-black font-medium transition-all placeholder:text-gray-500"
+            className="w-full h-32 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-gray-200 focus:shadow-sm bg-white resize-none text-gray-900 font-medium transition-all placeholder:text-gray-500"
             required
             disabled={isSubmitting}
           />
           <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <p className="text-sm font-bold text-black border-l-4 border-black pl-3 hidden sm:block">
-              Tip: Panggil <span className="font-black text-black bg-neo-yellow border-2 border-black px-1.5 py-0.5 ml-1">@AgriAI</span> untuk pendapat AI.
+            <p className="text-sm font-bold text-gray-900 border-l-4 border-agri-green pl-3 hidden sm:block">
+              Tip: Panggil <span className="font-semibold text-gray-900 bg-amber-50 border border-gray-200 rounded-xl px-1.5 py-0.5 ml-1">@AgriAI</span> untuk pendapat AI.
             </p>
             <button
               type="submit"
               disabled={isSubmitting || !replyText.trim()}
-              className="inline-flex items-center justify-center border-2 border-black bg-neo-accent px-6 py-2.5 text-sm font-black uppercase text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:ml-auto w-full sm:w-auto"
+              className="inline-flex items-center justify-center border border-gray-200 rounded-xl bg-agri-green-light px-6 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:-translate-y-1 hover:shadow-md hover:shadow-sm active:scale-95 active:shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:ml-auto w-full sm:w-auto"
             >
               {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" strokeWidth={2.5}/>}
               Kirim Balasan
