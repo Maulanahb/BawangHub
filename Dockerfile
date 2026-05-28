@@ -32,5 +32,8 @@ COPY --from=builder /app/dist ./dist
 # Expose port
 EXPOSE 3000
 
+# Set production environment
+ENV NODE_ENV=production
+
 # Start server
 CMD ["node", "dist/server.cjs"]
