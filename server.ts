@@ -29,7 +29,7 @@ app.post("/api/gemini/generate", async (req, res) => {
   if (!ai) return res.status(500).json({ error: "Gemini not configured" });
   try {
     const { prompt, isJson, inlineData } = req.body;
-    const model = "gemini-3.5-flash";
+    const model = "gemini-2.0-flash";
     
     const parts: any[] = [{ text: prompt }];
     if (inlineData) {
@@ -57,7 +57,7 @@ app.post("/api/gemini/chat", async (req, res) => {
   if (!ai) return res.status(500).json({ error: "Gemini not configured" });
   try {
     const { history, message, systemInstruction } = req.body;
-    const model = "gemini-3.5-flash";
+    const model = "gemini-2.0-flash";
     
     // Format history
     const formattedHistory = history.map((msg: any) => ({
