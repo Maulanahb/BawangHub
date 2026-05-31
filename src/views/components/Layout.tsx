@@ -1,14 +1,8 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { LayoutDashboard, LeafyGreen, Calculator, CalendarDays, BookOpen, BarChart3, MessageSquare, UserCircle, LogOut, Bot, ShieldAlert, Menu, X, ChevronLeft, Image as ImageIcon } from "lucide-react";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { cn } from "@/lib/utils";
 import { useAuth } from "./AuthProvider";
-import { JavaneseFarmerSVG } from "./Illustrations";
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 export default function Layout() {
   const location = useLocation();

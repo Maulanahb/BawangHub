@@ -29,8 +29,9 @@ export default function TanyaAI() {
     setIsLoading(true);
 
     try {
-      // Send to AI (excluding the greeting to save tokens/keep it clean, but let's pass all except the first if it's too long... actually let's pass all)
-      const aiResponse = await chatWithAgriAI(updatedMessages.slice(1), userMsg);
+      // Send to AI — pass history WITHOUT the latest user msg (slice off last), since apiChat appends userMsg separately
+      const historyForAI = updatedMessages.slice(1, -1); // skip greeting + skip last user msg
+      const aiResponse = await chatWithAgriAI(historyForAI, userMsg);
       setMessages([...updatedMessages, { role: "model", text: aiResponse }]);
     } catch (err) {
       setMessages([...updatedMessages, { role: "model", text: "Maaf, terjadi kesalahan atau koneksi terputus. Silakan coba lagi." }]);

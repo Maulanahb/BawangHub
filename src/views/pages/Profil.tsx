@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../components/AuthProvider";
 import { db, handleFirestoreError, OperationType } from "../../models/lib/firebase";
-import { doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, query, orderBy, limit, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 import { UserCircle, MapPin, Ruler, Loader2, Save, FileText, ArrowRight, Bot, Send, User, MessageSquare, AlertCircle, Lightbulb } from "lucide-react";
 import { Link } from "react-router-dom";
 import { analyzeHistoryChat, type ChatMessage } from "../../models/services/gemini";
@@ -119,12 +119,13 @@ export default function Profil() {
     setMessage("");
     try {
       const docRef = doc(db, "users", user.uid);
-      await setDoc(docRef, {
+      await updateDoc(docRef, {
         name: profile.name,
+        email: profile.email || user.email || '',
         landArea: Number(profile.landArea),
         landLocation: profile.landLocation,
-        updatedAt: new Date()
-      }, { merge: true });
+        updatedAt: serverTimestamp()
+      });
       setMessage("Profil berhasil diperbarui.");
     } catch (error: any) {
       console.error("Error updating profile:", error);
@@ -430,21 +431,21 @@ ${history.map((h, i) => {
               <div key={idx} className={`flex w-full gap-3 md:gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.role === 'user' ? (
                   <>
-                    <div className="max-w-[75%] md:max-w-[80%] rounded-xl border border-gray-200 rounded-xl p-3 md:p-4 shadow-sm bg-white text-gray-900">
+                    <div className="max-w-[75%] md:max-w-[80%] rounded-xl border border-gray-200 p-3 md:p-4 shadow-sm bg-white text-gray-900">
                       <div className="text-sm md:text-base leading-relaxed whitespace-pre-wrap font-medium">
                         {msg.text}
                       </div>
                     </div>
-                    <div className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded-xl rounded-lg flex items-center justify-center shrink-0 shadow-sm bg-white">
+                    <div className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm bg-white">
                       <User className="w-6 h-6 md:w-7 md:h-7 text-gray-900" />
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded-xl rounded-lg flex items-center justify-center shrink-0 shadow-sm bg-amber-50">
+                    <div className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm bg-amber-50">
                       <Bot className="w-6 h-6 md:w-7 md:h-7 text-gray-900" />
                     </div>
-                    <div className="max-w-[75%] md:max-w-[80%] rounded-xl border border-gray-200 rounded-xl p-3 md:p-4 shadow-sm bg-white text-gray-900">
+                    <div className="max-w-[75%] md:max-w-[80%] rounded-xl border border-gray-200 p-3 md:p-4 shadow-sm bg-white text-gray-900">
                       <div className="prose prose-sm md:prose-base prose-p:leading-relaxed max-w-none text-gray-900">
                         <ReactMarkdown>{msg.text}</ReactMarkdown>
                       </div>
@@ -456,10 +457,10 @@ ${history.map((h, i) => {
           )}
           {chatLoading && (
             <div className="flex gap-4">
-              <div className="w-12 h-12 border border-gray-200 rounded-xl rounded-lg bg-amber-50 flex items-center justify-center shrink-0 shadow-sm">
+              <div className="w-12 h-12 border border-gray-200 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 shadow-sm">
                 <Loader2 className="w-7 h-7 animate-spin text-gray-900" />
               </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4 rounded-xl shadow-sm">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                 <p className="font-bold text-gray-900 animate-pulse">Agri AI sedang menganalisis histori Anda...</p>
               </div>
             </div>

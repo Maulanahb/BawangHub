@@ -8,18 +8,7 @@ import { getAgriAIReply } from "../../models/services/gemini";
 import { ArrowLeft, Send, Loader2, Bot, User as UserIcon, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Badge } from "../../components/Badge";
-
-// Helper for gamification points
-const getUserPoints = (userId: string) => {
-  if (userId === "bawang-bot") return 0;
-  let hash = 0;
-  for (let i = 0; i < userId.length; i++) {
-    hash = userId.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return Math.abs(hash % 900) + 100; // 100 to 1000 points
-};
-
-const isExpert = (points: number) => points >= 500;
+import { getUserPoints, isExpert } from "../../lib/gamification";
 
 export default function ForumDetail() {
   const { id } = useParams<{ id: string }>();

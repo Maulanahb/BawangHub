@@ -66,9 +66,8 @@ export default function Klinik() {
       const reader = new FileReader();
       reader.readAsDataURL(f);
       reader.onload = () => {
-        let result = reader.result as string;
-        // remove data:image/jpeg;base64,
-        result = result.split(',')[1];
+        const result = reader.result as string;
+        // Return full data URL — stripping is handled in gemini.ts
         resolve(result);
       };
       reader.onerror = (e) => reject(e);
@@ -149,12 +148,12 @@ export default function Klinik() {
         <div>
           {result ? (
             <div className="bg-white border border-gray-100 rounded-3xl shadow-sm flex flex-col h-full overflow-hidden relative">
-              <div className={`p-6 border-b border-gray-100 ${result.isHealthy ? 'bg-agri-green-light' : 'bg-red-50'}`}>
+              <div className={`p-6 border-b border-gray-100 ${result.severity === 'Aman' ? 'bg-agri-green-light' : 'bg-red-50'}`}>
                 <div className="flex flex-col gap-2 relative">
                   <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
                     {result.diseaseName}
                   </h3>
-                  <span className={`text-xs font-semibold px-3 py-1 rounded-full w-max mt-2 border ${result.isHealthy ? 'bg-agri-green text-white border-agri-green' : 'bg-white text-red-600 border-red-200'}`}>
+                  <span className={`text-xs font-semibold px-3 py-1 rounded-full w-max mt-2 border ${result.severity === 'Aman' ? 'bg-agri-green text-white border-agri-green' : 'bg-white text-red-600 border-red-200'}`}>
                     Akurasi: {result.confidence}
                   </span>
                 </div>

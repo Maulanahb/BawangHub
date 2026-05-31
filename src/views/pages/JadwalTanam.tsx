@@ -3,12 +3,7 @@ import { Loader2, Calendar, Droplet, Bug, Scissors, Leaf, CheckCircle2, AlertCir
 import { generateTimeline, type TimelineResult } from "../../models/services/gemini";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { cn } from "@/lib/utils";
 
 const CategoryIcon = ({ category }: { category: string }) => {
   switch (category) {
@@ -168,7 +163,7 @@ export default function JadwalTanam() {
               </div>
             </div>
           ) : (
-            <div className="h-full border border-dashed border-gray-200 rounded-3xl rounded-none flex flex-col items-center justify-center text-gray-900 bg-white p-8 text-center min-h-[400px]">
+            <div className="h-full border border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center text-gray-900 bg-white p-8 text-center min-h-[400px]">
               <div className="w-20 h-20 border border-gray-100 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6">
                  <Calendar className="w-10 h-10 text-gray-900" strokeWidth={2.5}/>
               </div>

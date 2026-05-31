@@ -125,7 +125,7 @@ export default function Galeri() {
             onClick={() => setSelectedCategory(cat)}
             className={`px-6 py-2 border border-gray-100 rounded-2xl font-semibold text-sm sm:text-base flex items-center gap-2 shadow-sm transition-all active:scale-95 active:shadow-sm ${
               selectedCategory === cat 
-                ? (cat === 'Pertumbuhan' ? 'bg-agri-green text-gray-900' : cat === 'Penyakit' ? 'bg-red-50 text-white' : 'bg-amber-50 text-gray-900')
+                ? (cat === 'Pertumbuhan' ? 'bg-agri-green text-gray-900' : cat === 'Penyakit' ? 'bg-red-500 text-white' : 'bg-amber-50 text-gray-900')
                 : 'bg-white text-gray-900 hover:bg-gray-100'
             }`}
           >
@@ -201,7 +201,7 @@ export default function Galeri() {
             <div className="md:w-2/5 p-6 flex flex-col overflow-y-auto">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex flex-wrap gap-2">
-                  <span className={`px-2 py-1 border border-gray-200 rounded-xl font-bold text-xs shadow-sm ${selectedImage.category === 'Pertumbuhan' ? 'bg-agri-green text-gray-900' : 'bg-red-50 text-white'}`}>
+                  <span className={`px-2 py-1 border border-gray-200 rounded-xl font-bold text-xs shadow-sm ${selectedImage.category === 'Pertumbuhan' ? 'bg-agri-green text-gray-900' : 'bg-red-500 text-white'}`}>
                     {selectedImage.category}
                   </span>
                   {selectedImage.badges.map(badge => (

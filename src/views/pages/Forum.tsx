@@ -22,18 +22,7 @@ import { useAuth } from "../components/AuthProvider";
 import { Thread } from "../../types/forum";
 import { MessageSquare, Plus, Loader2, Trash2 } from "lucide-react";
 import { Badge } from "../../components/Badge";
-
-// Helper for gamification points
-const getUserPoints = (userId: string) => {
-  if (userId === "bawang-bot") return 0;
-  let hash = 0;
-  for (let i = 0; i < userId.length; i++) {
-    hash = userId.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return Math.abs(hash % 900) + 100; // 100 to 1000 points
-};
-
-const isExpert = (points: number) => points >= 500;
+import { getUserPoints, isExpert } from "../../lib/gamification";
 
 export default function Forum() {
   const { user, isAdmin } = useAuth();

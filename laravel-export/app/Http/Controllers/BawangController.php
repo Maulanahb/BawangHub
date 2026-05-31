@@ -15,8 +15,8 @@ class BawangController extends Controller
     public function __construct()
     {
         $this->geminiApiKey = env('GEMINI_API_KEY');
-        // Using Gemini 1.5 Flash as requested
-        $this->geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $this->geminiApiKey;
+        // Using Gemini 2.5 Flash as requested
+        $this->geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $this->geminiApiKey;
     }
 
     // ============================================

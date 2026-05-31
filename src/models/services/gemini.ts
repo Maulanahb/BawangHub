@@ -199,22 +199,35 @@ Berikan:
   }
 }
 
-export async function getWeatherAdvice(weatherData: string): Promise<string> {
+export interface WeatherAdvice {
+  icon: string;
+  title: string;
+  advice: string;
+}
+
+export async function getWeatherAdvice(weatherData: string): Promise<WeatherAdvice> {
   const prompt = `Kamu adalah pakar cuaca pertanian khusus tanaman bawang merah. 
 Baca data cuaca singkat hari ini beserta lokasinya:
 ${weatherData}
 
-Balas dalam format laporan observasi dan instruksi aksi, seperti:
-- Analisis kondisi cuaca saat ini dampaknya terhadap kelembapan tanah, jamur, atau hama (misal: embun upas, moler, ulat bawang).
-- Tindakan preventif atau kuratif yang harus dilakukan hari ini (penyiraman pembilasan embun, dosis pestisida, dsb).
+Berikan saran singkat dalam format JSON murni (tanpa markdown):
+{
+  "icon": "Sun" | "Cloud" | "CloudRain" | "CloudLightning" | "ThermometerSun",
+  "title": "Judul saran singkat (maks 8 kata)",
+  "advice": "Saran aksi spesifik untuk petani bawang merah hari ini (1-2 kalimat)"
+}
 
-Format dalam Markdown biasa (boleh pakai list, bold), tanpa blok markdown JSON.`;
+Pilih icon yang paling sesuai dengan kondisi cuaca.`;
 
   try {
-    return await apiGenerate(prompt);
+    return await apiGenerate(prompt, true);
   } catch (error) {
     handleGeminiError(error, "Gemini Weather Advice");
-    return "Maaf, terjadi kesalahan saat menghubungi AI.";
+    return {
+      icon: "ThermometerSun",
+      title: "Saran Tidak Tersedia",
+      advice: "Maaf, terjadi kesalahan saat menghubungi AI."
+    };
   }
 }
 

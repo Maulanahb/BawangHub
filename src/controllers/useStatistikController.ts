@@ -97,7 +97,7 @@ export function useStatistikController() {
         ? pieChartData.map(d => `- ${d.name}: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(d.value)}`).join("\n")
         : "Belum ada catatan pengeluaran.";
 
-      const trenHargaStr = trenHargaData.map(d => `- ${d.bulan}: Rp${d.harga.toLocaleString('id-ID')}/kg`).join("\n");
+      const trenHargaStr = trenHargaData.map(d => `- ${d.bulan}: Rp${(d.harga ?? d.hargaPrediksi ?? 0).toLocaleString('id-ID')}/kg`).join("\n");
 
       // 2. Fetch AI Insight
       try {

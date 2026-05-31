@@ -64,7 +64,7 @@ export default function AdminDashboard() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-slate-800 text-white p-6 border border-gray-100 rounded-2xl rounded-xl shadow-sm relative overflow-hidden group">
+          <div className="bg-slate-800 text-white p-6 border border-gray-100 rounded-2xl shadow-sm relative overflow-hidden group">
              <Users className="absolute -right-4 -bottom-4 w-32 h-32 text-slate-700 opacity-50 group-hover:scale-110 transition-transform" />
              <div className="relative z-10">
                <h3 className="text-lg font-bold text-slate-300">Total Petani</h3>
@@ -72,7 +72,7 @@ export default function AdminDashboard() {
              </div>
           </div>
 
-          <div className="bg-slate-800 text-white p-6 border border-gray-100 rounded-2xl rounded-xl shadow-sm relative overflow-hidden group">
+          <div className="bg-slate-800 text-white p-6 border border-gray-100 rounded-2xl shadow-sm relative overflow-hidden group">
              <MessageSquare className="absolute -right-4 -bottom-4 w-32 h-32 text-slate-700 opacity-50 group-hover:scale-110 transition-transform" />
              <div className="relative z-10">
                <h3 className="text-lg font-bold text-slate-300">Total Diskusi</h3>
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
              </div>
           </div>
 
-          <div className="bg-slate-800 text-white p-6 border border-gray-100 rounded-2xl rounded-xl shadow-sm relative overflow-hidden group">
+          <div className="bg-slate-800 text-white p-6 border border-gray-100 rounded-2xl shadow-sm relative overflow-hidden group">
              <Bot className="absolute -right-4 -bottom-4 w-32 h-32 text-slate-700 opacity-50 group-hover:scale-110 transition-transform" />
              <div className="relative z-10">
                <h3 className="text-lg font-bold text-slate-300">Total Balasan AI</h3>
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Info Box */}
-      <div className="mt-12 bg-white border border-gray-100 rounded-2xl p-6 rounded-xl shadow-sm flex items-start gap-4">
+      <div className="mt-12 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex items-start gap-4">
          <AlertTriangle className="w-8 h-8 text-red-500 shrink-0 mt-1" />
          <div>
            <h3 className="font-semibold text-xl text-gray-900">Mode Admin Aktif</h3>

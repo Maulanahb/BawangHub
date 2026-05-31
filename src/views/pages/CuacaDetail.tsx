@@ -60,7 +60,7 @@ export default function CuacaDetail() {
         }
 
         try {
-          const aiAdvice = await getDetailedWeatherAdvice(infoText);
+          const aiAdvice = await getDetailedWeatherAdvice(infoText, locName);
           setAdvice(aiAdvice);
         } catch (aiErr: any) {
           console.error("Gagal mendapatkan saran AI:", aiErr);
